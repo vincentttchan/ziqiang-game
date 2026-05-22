@@ -775,20 +775,49 @@ document.addEventListener('DOMContentLoaded', () => {
     showScreen('epigraph-screen');
   }
 
-  // 引言「繼續」按鈕 → 進入主選單
+  // 引言「繼續」按鈕 → 進入主選單（Noise Burn 轉場）
   const epiContinue = $('btn-epigraph-continue');
   if (epiContinue) {
     epiContinue.addEventListener('click', () => {
       const epi = $('epigraph-screen');
-      // 淡出引言 → 主選單浮現（沿用 .fading-out 機制達成 crossfade）
-      epi.classList.add('fading-out');
-      showScreen('main-menu');
-      setTimeout(() => {
-        epi.classList.remove('fading-out');
-      }, 700);
+      playNoiseBurn(() => {
+        epi.classList.add('fading-out');
+        showScreen('main-menu');
+        setTimeout(() => epi.classList.remove('fading-out'), 700);
+      }, { duration: 1100, peakRatio: 0.32 });
     });
   }
 });
+
+// ── Noise Burn 轉場：可在任何畫面切換時呼叫 ──────────────
+// onMidpoint：在雜訊最濃時呼叫（此時切換畫面內容，玩家看不到突變）
+function playNoiseBurn(onMidpoint, options) {
+  const opts     = options || {};
+  const duration = opts.duration  || 1100;   // 整段毫秒數
+  const peakRatio = opts.peakRatio || 0.35;  // 何時切換內容（0-1）
+  const overlay  = document.getElementById('noise-burn-overlay');
+  if (!overlay) { if (onMidpoint) onMidpoint(); return; }
+
+  // 每次重隨機 turbulence seed，避免雜訊紋路一樣
+  const turb = overlay.querySelector('feTurbulence');
+  if (turb) turb.setAttribute('seed', String(Math.floor(Math.random() * 100)));
+
+  overlay.classList.add('active');
+  // Force reflow
+  void overlay.offsetWidth;
+  overlay.classList.add('burn-peak');
+
+  // 高峰時切畫面
+  setTimeout(() => {
+    if (onMidpoint) onMidpoint();
+  }, duration * peakRatio);
+
+  // 動畫結束後收場
+  setTimeout(() => {
+    overlay.classList.remove('burn-peak');
+    overlay.classList.remove('active');
+  }, duration + 50);
+}
 
 // ── 校準模式 ──────────────────────────────────────────
 function initCalibration() {
@@ -1302,6 +1331,13 @@ function markTransitionSeen(key) {
 
 let _chapterTypeTimer = null;
 function showChapterTransition(data, onComplete) {
+  // 先讓 Noise Burn 接管畫面，再切到章節過場
+  playNoiseBurn(() => {
+    _renderChapterTransition(data, onComplete);
+  }, { duration: 1100, peakRatio: 0.32 });
+}
+
+function _renderChapterTransition(data, onComplete) {
   $('transition-year').textContent       = data.year     || '';
   // 把標題拆成上下兩半（依字數平均切，奇數時上半多一字）
   const title = data.title || '';

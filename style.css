@@ -7017,6 +7017,101 @@ button,
 }
 
 /* ══════════════════════════════════════════════════════
+   Noise Burn 轉場（仿《Dark》膠卷燒穿效果）
+   ══════════════════════════════════════════════════════ */
+#noise-burn-overlay {
+  position: fixed; inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  display: none;
+}
+#noise-burn-overlay.active { display: block; }
+#noise-burn-overlay.burn-peak { opacity: 1; }
+
+/* 層 1：暖色閃光（中心強、邊緣弱） */
+.nb-flash {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at center,
+      rgba(255,225,170,0.55) 0%,
+      rgba(220,170,100,0.25) 30%,
+      rgba(180,120,60,0.08) 60%,
+      transparent 90%);
+  mix-blend-mode: screen;
+  opacity: 0;
+  transform: scale(0.85);
+}
+#noise-burn-overlay.burn-peak .nb-flash {
+  animation: nb-flash-anim 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes nb-flash-anim {
+  0%   { opacity: 0;   transform: scale(0.85); }
+  20%  { opacity: 1;   transform: scale(1.06); }
+  55%  { opacity: 0.7; transform: scale(1.18); }
+  100% { opacity: 0;   transform: scale(1.4);  }
+}
+
+/* 層 2：雜訊粒子 */
+.nb-noise {
+  position: absolute; inset: 0;
+  overflow: hidden;
+  mix-blend-mode: overlay;
+  opacity: 0;
+}
+.nb-noise svg {
+  width: 110%; height: 110%;
+  position: absolute;
+  top: -5%; left: -5%;
+}
+#noise-burn-overlay.burn-peak .nb-noise {
+  animation: nb-noise-anim 1.1s ease forwards;
+}
+#noise-burn-overlay.burn-peak .nb-noise svg {
+  animation: nb-noise-shift 0.08s steps(3) infinite;
+}
+@keyframes nb-noise-anim {
+  0%   { opacity: 0; }
+  18%  { opacity: 0.95; }
+  60%  { opacity: 0.7; }
+  100% { opacity: 0; }
+}
+@keyframes nb-noise-shift {
+  0%   { transform: translate(0, 0)       scale(1.0); }
+  33%  { transform: translate(-1%, 1%)    scale(1.02); }
+  66%  { transform: translate(1.5%, -1%)  scale(0.99); }
+  100% { transform: translate(-0.5%, 1%)  scale(1.01); }
+}
+
+/* 層 3：掃描線（橫向亮線快速劃過） */
+.nb-scanline {
+  position: absolute;
+  left: 0; right: 0;
+  top: 50%;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,235,200,0.6) 30%,
+    rgba(255,245,220,0.95) 50%,
+    rgba(255,235,200,0.6) 70%,
+    transparent 100%);
+  box-shadow:
+    0 0 12px rgba(255,225,170,0.6),
+    0 0 24px rgba(255,200,130,0.35);
+  opacity: 0;
+  transform: scaleY(0);
+}
+#noise-burn-overlay.burn-peak .nb-scanline {
+  animation: nb-scanline-anim 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes nb-scanline-anim {
+  0%   { opacity: 0; transform: scaleY(0)  translateY(0);    }
+  15%  { opacity: 1; transform: scaleY(1)  translateY(-40vh);}
+  85%  { opacity: 1; transform: scaleY(1)  translateY(40vh); }
+  100% { opacity: 0; transform: scaleY(0)  translateY(50vh); }
+}
+
+/* ══════════════════════════════════════════════════════
    引言頁面（Epigraph Screen）— 紀念碑式
    ══════════════════════════════════════════════════════ */
 #epigraph-screen {
