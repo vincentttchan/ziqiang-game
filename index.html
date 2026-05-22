@@ -97,38 +97,58 @@
   </button>
 </div>
 
-<!-- ===== 學生登入彈窗（首次進入遊戲時顯示） ===== -->
+<!-- ===== 學生登入彈窗：投帖入冊（首次進入遊戲時顯示） ===== -->
 <div id="student-login-modal" class="login-modal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="login-title">
-  <div class="login-modal">
-    <div class="login-modal-seal" aria-hidden="true">學</div>
-    <h2 id="login-title" class="login-modal-title">學習記錄登記</h2>
-    <p class="login-modal-desc">為記錄你的學習歷程，請先填寫下列資料。資料只用於教學分析，不會公開。</p>
+  <div class="login-dossier">
+    <div class="login-grid-bg" aria-hidden="true"></div>
 
-    <label class="login-field">
-      <span class="login-field-label">班別</span>
-      <select id="login-class" class="login-input" required>
-        <option value="">— 請選擇 —</option>
-        <option value="1A">1A</option><option value="1B">1B</option><option value="1C">1C</option><option value="1D">1D</option>
-        <option value="2A">2A</option><option value="2B">2B</option><option value="2C">2C</option><option value="2D">2D</option>
-        <option value="3A">3A</option><option value="3B">3B</option><option value="3C">3C</option><option value="3D">3D</option>
-        <option value="4A">4A</option><option value="4B">4B</option><option value="4C">4C</option><option value="4D">4D</option>
-        <option value="5A">5A</option><option value="5B">5B</option><option value="5C">5C</option><option value="5D">5D</option>
-        <option value="6A">6A</option><option value="6B">6B</option><option value="6C">6C</option><option value="6D">6D</option>
-        <option value="other">其他（如教師試玩）</option>
-      </select>
-    </label>
-
-    <label class="login-field">
-      <span class="login-field-label">學號</span>
-      <input id="login-student-id" class="login-input" type="text" inputmode="numeric" maxlength="6" placeholder="例如 12 或 23A" required />
-    </label>
-
-    <div class="login-modal-actions">
-      <button class="pill-btn pill-ghost" id="login-skip" type="button">略過（不記錄）</button>
-      <button class="pill-btn pill-primary" id="login-submit" type="button">確認並進入</button>
+    <!-- 標頭 -->
+    <div class="login-classified">
+      <span class="lc-dot" aria-hidden="true"></span>
+      <span class="lc-text">投 帖 入 冊 · 名 冊 登 記</span>
+      <span class="lc-id">卷 · 貳</span>
     </div>
 
-    <p class="login-modal-note">提示：若多人共用一部電腦，請通知下一位同學在登入前先點「翻閱回憶錄 → 切換登入身份」。</p>
+    <!-- 朱印 -->
+    <div class="login-stamp" aria-hidden="true">投<br>帖</div>
+
+    <!-- 主體 -->
+    <div class="login-body">
+      <div class="login-meta">SCH—02 　 道 光 二 十 二 年 　 三 月</div>
+      <h2 id="login-title" class="login-title">通 名 請 見</h2>
+      <p class="login-subtitle">入 幕 之 前 · 請 通 名 姓</p>
+      <div class="login-divider"></div>
+
+      <p class="login-intro">老臣將汝引薦入幕。請於下方<strong>通名請見</strong>，名冊只供業師查閱，不外傳。</p>
+
+      <label class="login-field-row">
+        <span class="lfr-label">班 別</span>
+        <select id="login-class" class="lfr-input" required>
+          <option value="">— 請 通 名 —</option>
+          <option value="1A">一 · 甲（1A）</option><option value="1B">一 · 乙（1B）</option><option value="1C">一 · 丙（1C）</option><option value="1D">一 · 丁（1D）</option>
+          <option value="2A">二 · 甲（2A）</option><option value="2B">二 · 乙（2B）</option><option value="2C">二 · 丙（2C）</option><option value="2D">二 · 丁（2D）</option>
+          <option value="3A">三 · 甲（3A）</option><option value="3B">三 · 乙（3B）</option><option value="3C">三 · 丙（3C）</option><option value="3D">三 · 丁（3D）</option>
+          <option value="4A">四 · 甲（4A）</option><option value="4B">四 · 乙（4B）</option><option value="4C">四 · 丙（4C）</option><option value="4D">四 · 丁（4D）</option>
+          <option value="5A">五 · 甲（5A）</option><option value="5B">五 · 乙（5B）</option><option value="5C">五 · 丙（5C）</option><option value="5D">五 · 丁（5D）</option>
+          <option value="6A">六 · 甲（6A）</option><option value="6B">六 · 乙（6B）</option><option value="6C">六 · 丙（6C）</option><option value="6D">六 · 丁（6D）</option>
+          <option value="other">其 他 （業師試閱）</option>
+        </select>
+      </label>
+
+      <label class="login-field-row">
+        <span class="lfr-label">學 號</span>
+        <input id="login-student-id" class="lfr-input" type="text" inputmode="numeric" maxlength="6" placeholder="例 如 一 二 ／ 二 三 甲" required />
+      </label>
+
+      <div class="login-divider"></div>
+
+      <div class="login-actions">
+        <button class="pill-btn pill-ghost"   id="login-skip"   type="button">隱 名 入 冊</button>
+        <button class="pill-btn pill-primary" id="login-submit" type="button">鈐 印 入 幕 ▸</button>
+      </div>
+
+      <p class="login-note">若多人同用一案，下位後生請至「翻閱回憶錄 → 切換登入身份」換印重投。</p>
+    </div>
   </div>
 </div>
 
