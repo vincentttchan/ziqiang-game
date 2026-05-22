@@ -1483,41 +1483,51 @@ function renderScene(sceneId) {
   const progressEl = $('scene-progress');
   if (progressEl) progressEl.textContent = `場景 ${currentSceneNum} / ${totalScenes}`;
 
-  // 背景 — crossfade between two bg-layer di與
+  // 背景 — crossfade between two bg-layer divs
   const layerA = $('bg-layer-a');
   const layerB = $('bg-layer-b');
   const activeLayer = layerA.classList.contains('bg-active') ? layerA : layerB;
   const inactiveLayer = activeLayer === layerA ? layerB : layerA;
-  // Apply new scene class to the inactive layer, then crossfade
-  inactiveLayer.className = 'bg-layer has-img ' + scene.bg;
-  const bgImg = inactiveLayer.querySelector('.bg-img');
+
   const sceneBgURL = sceneBgUrl(scene.bg);
-  if (bgImg) {
-    bgImg.src = sceneBgURL;
-    // Sync #scene-objects aspect-ratio to the image's actual rendered rect
-    // (contain mode). This ensures x/y% hotspots map to the visible image,
-    // not to letterbox space.
-    const applyAspect = () => {
-      const r = bgImg.naturalWidth / bgImg.naturalHeight;
-      if (r > 0 && isFinite(r)) {
-        $('scene-frame').style.setProperty('--img-aspect', r.toString());
-      }
-    };
-    if (bgImg.complete && bgImg.naturalWidth > 0) {
-      applyAspect();
-    } else {
-      bgImg.onload = applyAspect;
-    }
-  }
+
   // 路徑 ②：將當前場景圖 URL 寫入 scene-area，供 ::before 模糊背景延伸層使用
   const sceneAreaEl = $('scene-area');
   if (sceneAreaEl) {
     sceneAreaEl.style.setProperty('--scene-bg-url', `url('${sceneBgURL}')`);
   }
-  // Force reflow so transition triggers
-  void inactiveLayer.offsetWidth;
-  inactiveLayer.classList.add('bg-active');
-  activeLayer.classList.remove('bg-active');
+
+  // 等新圖片載入後才執行 crossfade，避免舊場景圖閃現
+  inactiveLayer.className = 'bg-layer has-img ' + scene.bg;
+  const bgImg = inactiveLayer.querySelector('.bg-img');
+
+  const doSwitch = () => {
+    // Sync #scene-objects aspect-ratio to the image's actual rendered rect
+    const r = bgImg ? bgImg.naturalWidth / bgImg.naturalHeight : 0;
+    if (r > 0 && isFinite(r)) {
+      $('scene-frame').style.setProperty('--img-aspect', r.toString());
+    }
+    // Force reflow so CSS transition triggers, then swap active layer
+    void inactiveLayer.offsetWidth;
+    inactiveLayer.classList.add('bg-active');
+    activeLayer.classList.remove('bg-active');
+  };
+
+  if (bgImg) {
+    bgImg.src = sceneBgURL;
+    if (bgImg.complete && bgImg.naturalWidth > 0) {
+      // Already cached — switch immediately
+      doSwitch();
+    } else {
+      // Wait for load; fall back after 800 ms if onload never fires (e.g. error)
+      let switched = false;
+      const fallback = setTimeout(() => { if (!switched) { switched = true; doSwitch(); } }, 800);
+      bgImg.onload = () => { if (!switched) { switched = true; clearTimeout(fallback); doSwitch(); } };
+      bgImg.onerror = () => { if (!switched) { switched = true; clearTimeout(fallback); doSwitch(); } };
+    }
+  } else {
+    doSwitch();
+  }
 
   // 場景標題：左上角極簡呈現（原版位置）
   const titleEl = $('scene-title');
@@ -3051,9 +3061,6 @@ function showChapterQuiz() {
   // 啟動奏摺工作坊（取代舊速答／工作台）
   renderMemorialWorkshop(ch);
 
-  // 渲染章節筆記
-  renderChapterNote(ch);
-
   showScreen('quiz-screen');
   const quiz = $('quiz-screen');
   quiz.classList.remove('study-card-enter');
@@ -4174,14 +4181,14 @@ function showSecretaryLetter(chapterKey, onContinue) {
         if (window.Analytics) Analytics.letterQuiz(state.chapterKey, letter.quiz.id || 'q1', opt.text, !!opt.correct);
         [...optsEl.children].forEach(b => b.disabled = true);
         if (opt.correct) {
-          btn.classList.add('correct');
+          btn.classList.add('opt-correct');
           fbEl.className = 'letter-quiz-feedback feedback-correct';
-          fbEl.innerHTML = '✓ ' + mdBoldToHtml(opt.feedback);
+          fbEl.innerHTML = mdBoldToHtml(opt.feedback);
         } else {
-          btn.classList.add('wrong');
+          btn.classList.add('opt-wrong');
           // 第一次錯：可再選一次（找出正確的）
           fbEl.className = 'letter-quiz-feedback feedback-wrong';
-          fbEl.innerHTML = '✗ ' + mdBoldToHtml(opt.feedback) + '<br><span class="quiz-retry-hint">請再選一次。</span>';
+          fbEl.innerHTML = mdBoldToHtml(opt.feedback) + '<br><span class="quiz-retry-hint" style="font-size:0.82rem;opacity:0.7">請再選一次。</span>';
           btn.disabled = true;
           [...optsEl.children].forEach(b => { if (b !== btn) b.disabled = false; });
         }
