@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0604">
+<title>自強之路 ── 洋務運動互動遊戲</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=78">
+</head>
+<body>
+
+<!-- ===== Film Grain SVG noise（全局質感層） ===== -->
+<svg class="grain-svg" aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+  <filter id="grain-filter">
+    <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" seed="7"/>
+    <feColorMatrix values="0 0 0 0 0.85
+                            0 0 0 0 0.78
+                            0 0 0 0 0.62
+                            0 0 0 0.42 0"/>
+  </filter>
+</svg>
+<div class="film-grain" aria-hidden="true"></div>
+
+
+<!-- ===== 存檔提示 Modal ===== -->
+<div id="resume-modal" class="resume-modal" aria-hidden="true">
+  <div class="resume-backdrop"></div>
+  <div class="resume-card" role="dialog" aria-modal="true" aria-labelledby="resume-title">
+    <div class="resume-emblem">⌛</div>
+    <h3 id="resume-title">發現你上次的遊戲記錄</h3>
+    <p class="resume-meta" id="resume-meta">上次進行至 ——</p>
+    <p class="resume-hint">是否要繼續上次的旅程？</p>
+    <div class="resume-actions">
+      <button class="pill-btn pill-primary" id="resume-continue">繼續旅程</button>
+      <button class="pill-btn pill-ghost" id="resume-restart">從頭開始</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 引言頁面（首次入場） ===== -->
+<div id="epigraph-screen" class="screen active">
+  <div class="epigraph-grain" aria-hidden="true"></div>
+  <div class="epigraph-content">
+
+    <!-- 第一段：李鴻章自評 -->
+    <blockquote class="epigraph-quote epi-quote-1">
+      <p class="quote-text">「中國數千年來，<br>未有之大變局也。」</p>
+      <footer class="quote-cite">
+        <span class="cite-name">— 李鴻章</span>
+        <span class="cite-source">奏摺　一八七二年</span>
+      </footer>
+    </blockquote>
+
+    <!-- 兩段之間的分隔線 -->
+    <div class="epigraph-divider" aria-hidden="true">
+      <span class="divider-line"></span>
+    </div>
+
+    <!-- 第二段：梁啟超評語 -->
+    <blockquote class="epigraph-quote epi-quote-2">
+      <p class="quote-text">「吾敬李鴻章之才，<br>惜李鴻章之識，<br>而悲李鴻章之遇。」</p>
+      <footer class="quote-cite">
+        <span class="cite-name">— 梁啟超</span>
+        <span class="cite-source">《李鴻章傳》　一九〇一年</span>
+      </footer>
+    </blockquote>
+
+  </div>
+
+  <!-- 繼續按鈕（右下角，極簡） -->
+  <button class="epigraph-continue" id="btn-epigraph-continue" type="button">
+    <span class="ec-label">繼續</span>
+    <span class="ec-arrow" aria-hidden="true">▸</span>
+  </button>
+</div>
+
+<!-- ===== 學生登入彈窗（首次進入遊戲時顯示） ===== -->
+<div id="student-login-modal" class="login-modal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="login-title">
+  <div class="login-modal">
+    <div class="login-modal-seal" aria-hidden="true">學</div>
+    <h2 id="login-title" class="login-modal-title">學習記錄登記</h2>
+    <p class="login-modal-desc">為記錄你的學習歷程，請先填寫下列資料。資料只用於教學分析，不會公開。</p>
+
+    <label class="login-field">
+      <span class="login-field-label">班別</span>
+      <select id="login-class" class="login-input" required>
+        <option value="">— 請選擇 —</option>
+        <option value="S4A">S4A</option><option value="S4B">S4B</option>
+        <option value="S4C">S4C</option><option value="S4D">S4D</option>
+        <option value="S5A">S5A</option><option value="S5B">S5B</option>
+        <option value="S5C">S5C</option><option value="S5D">S5D</option>
+        <option value="S6A">S6A</option><option value="S6B">S6B</option>
+        <option value="S6C">S6C</option><option value="S6D">S6D</option>
+        <option value="other">其他（如教師試玩）</option>
+      </select>
+    </label>
+
+    <label class="login-field">
+      <span class="login-field-label">學號</span>
+      <input id="login-student-id" class="login-input" type="text" inputmode="numeric" maxlength="6" placeholder="例如 12 或 23A" required />
+    </label>
+
+    <div class="login-modal-actions">
+      <button class="pill-btn pill-ghost" id="login-skip" type="button">略過（不記錄）</button>
+      <button class="pill-btn pill-primary" id="login-submit" type="button">確認並進入</button>
+    </div>
+
+    <p class="login-modal-note">提示：若多人共用一部電腦，請通知下一位同學在登入前先點「翻閱回憶錄 → 切換登入身份」。</p>
+  </div>
+</div>
+
+<!-- ===== 主選單：裂痕中的廢墟 ===== -->
+<div id="main-menu" class="screen landing-ruin">
+
+  <!-- 層 1：滿版背景圖（Ken Burns 緩慢推近） -->
+  <div class="landing-bg" aria-hidden="true">
+    <div class="landing-bg-img"></div>
+  </div>
+
+  <!-- 層 2：紅色火光氛圍（左右邊緣滲入，flicker） -->
+  <div class="landing-firelight" aria-hidden="true">
+    <span class="firelight-l"></span>
+    <span class="firelight-r"></span>
+    <span class="firelight-t"></span>
+  </div>
+
+  <!-- 層 3：暗角 vignette -->
+  <div class="landing-vignette" aria-hidden="true"></div>
+
+  <!-- 層 4：水墨裂痕 SVG（橫貫畫面，視差跟隨） -->
+  <svg class="landing-crack" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="crackGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%"  stop-color="#0a0604" stop-opacity="0"/>
+        <stop offset="20%" stop-color="#3a2418" stop-opacity="0.6"/>
+        <stop offset="50%" stop-color="#1a0e08" stop-opacity="0.9"/>
+        <stop offset="80%" stop-color="#3a2418" stop-opacity="0.6"/>
+        <stop offset="100%" stop-color="#0a0604" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path class="crack-path" d="M 0,55 C 120,40 220,72 340,52 C 460,32 540,66 660,48 C 780,30 880,58 1000,42" stroke="url(#crackGrad)" stroke-width="1.4" fill="none"/>
+    <path class="crack-path crack-secondary" d="M 0,58 C 130,50 230,74 350,58 C 470,42 550,68 670,54 C 790,40 890,60 1000,48" stroke="url(#crackGrad)" stroke-width="0.7" fill="none" opacity="0.5"/>
+  </svg>
+
+  <!-- 層 5-7：垂直居中 stack（標題 + 副資訊 + CTA） -->
+  <div class="landing-center">
+    <h1 class="sr-only">自強之路</h1>
+    <div class="landing-title" aria-hidden="true">
+      <span class="title-char" style="--i:0">自</span><span class="title-char" style="--i:1">強</span><span class="title-char" style="--i:2">之</span><span class="title-char" style="--i:3">路</span>
+    </div>
+    <div class="landing-meta" aria-hidden="true">
+      <span class="meta-year-cn">一八三九 — 一八九四</span>
+    </div>
+    <button class="landing-cta" id="btn-start-new" type="button" aria-label="進入歷史">
+      <span class="cta-label">進入歷史</span>
+      <span class="cta-sub" aria-hidden="true">ENTER HISTORY</span>
+      <span class="cta-line" aria-hidden="true"></span>
+      <span class="cta-arrow" aria-hidden="true">▾</span>
+    </button>
+  </div>
+
+  <!-- 層 8：左下角資訊 -->
+  <div class="landing-corner-l" aria-hidden="true">HKDSE · 中國歷史</div>
+
+  <!-- 層 9：右上角控制列 -->
+  <div class="landing-top-right">
+    <button class="landing-audio-btn" id="btn-landing-audio" type="button" aria-pressed="false" aria-label="切換環境音" title="環境音">
+      <svg class="audio-svg" viewBox="0 0 24 24" aria-hidden="true">
+        <path class="audio-on"  d="M4 9v6h4l5 5V4L8 9H4zm12 .5a4 4 0 0 1 0 5M19 7a8 8 0 0 1 0 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path class="audio-off" d="M4 9v6h4l5 5V4L8 9H4zM16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <a class="landing-memoirs-link" id="btn-memoirs" href="#" role="button">翻閱回憶錄</a>
+    <a class="landing-about-link" id="btn-about" href="#" role="button">案卷說明</a>
+  </div>
+
+</div>
+
+<!-- ===== 關於畫面 ===== -->
+<div id="about-screen" class="screen">
+  <div class="about-scroll">
+    <div class="about-content">
+      <h2>關於本遊戲</h2>
+      <p>本遊戲以洋務運動為題材，帶領玩家從 1839 年鴉片戰爭前夕，一路經歷英法聯軍之役、太平天國、總理衙門成立、各項自強措施，直至 1894 年甲午戰爭的慘敗。</p>
+
+      <h3>你的身份</h3>
+      <p>你是一位<strong>1820 年代生於沿海的年輕士子</strong>。略懂洋務、通曉文書。1842 年，因翻譯英文文書之能，被耆英延為<strong>書記</strong>。此後三十年，你輾轉於各位洋務派、守舊派之間：耆英、奕訢、曾國藩、李鴻章、張之洞——你親歷整個時代的興衰。</p>
+      <p>你的姓名不重要——重要的是你<strong>蒐集的卷宗</strong>、<strong>親聞的議論</strong>、<strong>默思的判斷</strong>。每一場景，你<strong>蒐集史料、聆聽爭辯、向重臣進言</strong>。章末，你<strong>將卷宗整理成一份奏摺</strong>，呈交御覽——這份奏摺，亦是給未來史學家的證詞。</p>
+
+      <h3>設計理念</h3>
+      <p>洋務運動的失敗根源是<strong>結構性的</strong>，不是個別決策的失誤。本遊戲讓你親歷李鴻章、奕訢、曾國藩等改革者所面對的兩難——你的進言會影響你<strong>理解歷史的深度</strong>，但無法改寫歷史的結局。這是一場必然走向失敗的時代悲劇。</p>
+
+      <h3>玩法</h3>
+      <ol>
+        <li>於場景中點擊發光物件，<strong>蒐集卷宗（史料線索）</strong></li>
+        <li>判讀關鍵卷宗的歷史意義</li>
+        <li>聆聽重臣對話與守舊派爭辯</li>
+        <li><strong>向重臣進言</strong>——你的立場影響後續敘事</li>
+        <li>援引你蒐集的卷宗，反駁對立陣營</li>
+        <li>章末進入<strong>奏摺工作坊</strong>——將你蒐集的卷宗整理成完整論點</li>
+      </ol>
+
+      <h3>文憑試考點覆蓋</h3>
+      <p>全面涵蓋洋務運動的背景、前期強兵措施、後期求富措施、目標轉變原因、失敗原因，並與明治維新進行比較。</p>
+
+      <h3>進度保存</h3>
+      <p>章節完成後自動儲存。下次開啟時，主選單會詢問是否繼續上次的旅程。</p>
+
+      <button class="pill-btn" id="about-back">← 返回主選單</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 遊戲主畫面 ===== -->
+<div id="game-screen" class="screen">
+
+  <!-- 頂部時間軸 -->
+  <div id="timeline">
+    <div class="timeline-track">
+      <div class="timeline-marker" data-year="1839"><span>1839</span></div>
+      <div class="timeline-marker" data-year="1842"><span>1842</span></div>
+      <div class="timeline-marker" data-year="1860"><span>1860</span></div>
+      <div class="timeline-marker" data-year="1861"><span>1861</span></div>
+      <div class="timeline-marker" data-year="1865"><span>1865</span></div>
+      <div class="timeline-marker" data-year="1872"><span>1872</span></div>
+      <div class="timeline-marker highlight" data-year="1874"><span>1874</span></div>
+      <div class="timeline-marker" data-year="1881"><span>1881</span></div>
+      <div class="timeline-marker" data-year="1888"><span>1888</span></div>
+      <div class="timeline-marker" data-year="1894"><span>1894</span></div>
+    </div>
+    <div class="timeline-info">
+      <span id="current-year">— 年</span>
+      <span id="scene-progress" aria-label="場景進度"></span>
+      <span id="current-chapter">第一章</span>
+    </div>
+  </div>
+
+  <!-- 場景主區 -->
+  <div id="scene-area">
+    <div id="scene-frame">
+      <div id="scene-background">
+        <div class="bg-layer" id="bg-layer-a"><img class="bg-img" alt=""></div>
+        <div class="bg-layer" id="bg-layer-b"><img class="bg-img" alt=""></div>
+      </div>
+      <div id="scene-objects"></div>
+      <div id="scene-characters"></div>
+      <div id="scene-title"></div>
+      <div id="puzzle-progress" aria-live="polite"></div>
+      <div id="toolbar">
+        <button id="btn-mute" aria-label="靜音切換" title="環境音">
+          <svg class="tb-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path class="ico-on"  d="M4 9v6h4l5 5V4L8 9H4zm12 .5a4 4 0 0 1 0 5M19 7a8 8 0 0 1 0 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path class="ico-off" d="M4 9v6h4l5 5V4L8 9H4zM16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button id="btn-hint" aria-label="提示" title="提示">
+          <svg class="tb-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.4"/>
+            <path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-0.7 0.4-1 1-1 1.7v0.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            <circle cx="12" cy="16.5" r="0.9" fill="currentColor"/>
+          </svg>
+        </button>
+        <button id="btn-menu" aria-label="返回主選單" title="選單">
+          <svg class="tb-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <!-- 影片字幕：在 scene-frame 外部，緊貼 scene-area 底部（避免覆蓋場景內容） -->
+    <div id="scene-subtitle" aria-live="polite">
+      <span class="subtitle-text"></span>
+    </div>
+  </div>
+
+  <!-- 史料庫（橫向側欄 / 直向底部抽屜） -->
+  <div id="evidence-panel">
+    <div id="evidence-drawer-handle" role="button" aria-label="展開史料庫" tabindex="0">
+      <span class="handle-bar"></span>
+      <span class="handle-label">📜 史料庫</span>
+      <span class="evidence-badge" id="evidence-badge">0</span>
+    </div>
+    <div id="evidence-panel-inner">
+      <h3>館藏檔案</h3>
+      <div id="evidence-list"></div>
+    </div>
+  </div>
+
+  <!-- 底部對白區 -->
+  <div id="dialogue-area">
+    <div id="portrait-figure" aria-hidden="true">
+      <img id="dialogue-portrait" alt="">
+    </div>
+    <div id="dialogue-header">
+      <span id="dialogue-speaker"></span>
+      <span id="phase-indicator"></span>
+    </div>
+    <div id="dialogue-text" role="log" aria-live="polite"></div>
+    <div id="dialogue-choices" role="group" aria-label="選項"></div>
+    <button id="dialogue-continue" aria-label="繼續">▼ 繼續</button>
+  </div>
+
+  <!-- 抽屜遮罩（portrait 模式） -->
+  <div id="evidence-overlay"></div>
+</div>
+
+<!-- ===== 物件特寫面板 ===== -->
+<div id="closeup-panel" aria-hidden="true">
+  <div id="closeup-backdrop"></div>
+  <div id="closeup-card" role="dialog" aria-modal="true" aria-labelledby="closeup-label">
+    <button id="closeup-close" aria-label="關閉">✕</button>
+    <div id="closeup-img-wrap">
+      <img id="closeup-img" src="" alt="">
+    </div>
+    <div id="closeup-info">
+      <h3 id="closeup-label"></h3>
+      <p id="closeup-desc"></p>
+    </div>
+    <button id="closeup-collect">判斷史料意義</button>
+
+    <!-- 收集儀式：蓋章 + 論點 + 下一步按鈕（由用戶手動推進） -->
+    <div id="collect-ceremony" hidden>
+      <div class="cc-stamp-band">
+        <span class="cc-stamp">卷宗入檔</span>
+      </div>
+      <div class="cc-argument" id="cc-argument"></div>
+      <button class="pill-btn pill-primary cc-next-btn" id="cc-next-btn" type="button">下一步 →</button>
+    </div>
+
+    <!-- 推論題（思考門檻）-->
+    <div id="closeup-inference" hidden>
+      <div class="inf-prompt">
+        <span class="inf-prompt-label">史料判讀</span>
+        <span class="inf-prompt-text">先判斷史料意義，再把它轉化成可用論點。</span>
+      </div>
+      <h4 id="inf-question"></h4>
+      <div id="inf-options"></div>
+      <div id="inf-feedback" aria-live="polite"></div>
+      <button id="inf-next" class="pill-btn pill-primary" hidden>下一步 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 分類飛行徽章（潛意識歸類）===== -->
+<div id="category-flyer" aria-hidden="true"></div>
+<div id="learning-toast" aria-live="polite"></div>
+
+<!-- ===== 謎題彈窗 ===== -->
+<div id="puzzle-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="puzzle-title">
+  <div class="modal-content">
+    <div class="modal-icon" aria-hidden="true">🔍</div>
+    <h3 id="puzzle-title"></h3>
+    <p id="puzzle-description"></p>
+    <div id="puzzle-area"></div>
+    <div id="puzzle-status"></div>
+  </div>
+</div>
+
+<!-- ===== 史料解鎖動畫 ===== -->
+<div id="evidence-popup" role="status" aria-live="assertive">
+  <div class="popup-content">
+    <span class="popup-icon" aria-hidden="true">📜</span>
+    <div class="popup-text">
+      <span class="popup-label">解鎖史料</span>
+      <span id="popup-evidence-name"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 章末問答 + 章節筆記 ===== -->
+<div id="quiz-screen" class="screen">
+  <div class="quiz-scroll">
+    <div class="quiz-content">
+      <div class="quiz-header">
+        <span class="quiz-badge">文憑試問答</span>
+        <h2 id="quiz-chapter-title">章末問答</h2>
+      </div>
+      <div class="quiz-question-box">
+        <p id="quiz-question"></p>
+      </div>
+      <div id="quiz-speed-card" style="display:none"></div>
+      <div id="dse-workbench" style="display:none"></div>
+
+      <!-- 奏摺工作坊：四階段論點建構 -->
+      <section id="memorial-workshop" aria-labelledby="ws-title">
+        <header class="ws-head">
+          <span class="ws-eyebrow">奏摺工作坊</span>
+          <h3 id="ws-title">將你的卷宗，整理成一份奏摺</h3>
+          <p class="ws-instruction" id="ws-instruction">從本章蒐集的卷宗中，選出 3 件作為奏摺核心論據。</p>
+          <div class="ws-progress">
+            <span class="ws-step active" data-step="1">壹 · 揀選卷宗</span>
+            <span class="ws-sep">→</span>
+            <span class="ws-step" data-step="2">貳 · 論點生成</span>
+            <span class="ws-sep">→</span>
+            <span class="ws-step" data-step="3">參 · 奏摺成稿</span>
+            <span class="ws-sep">→</span>
+            <span class="ws-step" data-step="4">肆 · 歷史回響</span>
+          </div>
+        </header>
+
+        <!-- 階段 1：揀選卷宗 -->
+        <div class="ws-phase ws-phase-1" id="ws-phase-1">
+          <div class="ws-evidence-grid" id="ws-evidence-grid"></div>
+          <div class="ws-selection-bar">
+            <span class="ws-count">已選 <strong id="ws-selected-count">0</strong> / 3</span>
+            <div class="ws-chips" id="ws-selected-chips"></div>
+            <button class="pill-btn ws-btn-next" id="ws-to-phase-2" disabled>呈現論點 →</button>
+          </div>
+        </div>
+
+        <!-- 階段 2：論點生成 -->
+        <div class="ws-phase ws-phase-2" id="ws-phase-2" hidden>
+          <div class="ws-arguments" id="ws-arguments"></div>
+          <button class="pill-btn ws-btn-next" id="ws-to-phase-3">綴成奏摺 →</button>
+        </div>
+
+        <!-- 階段 3：奏摺成稿 -->
+        <div class="ws-phase ws-phase-3" id="ws-phase-3" hidden>
+          <article class="ws-memorial" id="ws-memorial-content"></article>
+          <div class="ws-phase-3-actions">
+            <button class="pill-btn ws-btn-next" id="ws-to-phase-4">呈交御覽 →</button>
+            <button class="ws-print-btn" id="ws-print-memorial" type="button" title="列印或儲存為 PDF">⎙ 列印 / 存 PDF</button>
+          </div>
+        </div>
+
+        <!-- 階段 4：歷史回響 + 文憑試標準 -->
+        <div class="ws-phase ws-phase-4" id="ws-phase-4" hidden>
+          <div class="ws-verdict-card ws-verdict-dse">
+            <h4>文憑試評分要點</h4>
+            <div id="ws-dse-points"></div>
+          </div>
+          <div class="ws-verdict-card ws-verdict-history">
+            <h4>歷史的回響</h4>
+            <p id="ws-history-echo"></p>
+          </div>
+        </div>
+      </section>
+
+      <div class="quiz-answers" id="quiz-answers-legacy" style="display:none">
+        <h3>評分要點</h3>
+        <div id="quiz-key-points"></div>
+      </div>
+
+      <!-- 章節筆記已由奏摺工作坊取代（v76 移除）— 保留 DOM 但隱藏，避免影響舊邏輯 -->
+      <div id="chapter-note" style="display:none">
+        <div class="note-header">
+          <span class="note-badge">章末筆記</span>
+          <h3 id="note-title">第 X 章筆記</h3>
+        </div>
+        <div class="note-summary" id="note-summary"></div>
+        <div class="note-section" id="note-section-facts">
+          <button class="note-toggle" data-target="note-facts" aria-expanded="true">
+            <span class="toggle-icon">▾</span>
+            <span class="toggle-label">必背史實</span>
+          </button>
+          <div class="note-body" id="note-facts"></div>
+        </div>
+        <div class="note-section" id="note-section-gems">
+          <button class="note-toggle" data-target="note-gems" aria-expanded="false">
+            <span class="toggle-icon">▸</span>
+            <span class="toggle-label">答題金句</span>
+          </button>
+          <div class="note-body collapsed" id="note-gems"></div>
+        </div>
+        <div class="note-section" id="note-section-dse-template">
+          <button class="note-toggle" data-target="note-dse-template" aria-expanded="false">
+            <span class="toggle-icon">▸</span>
+            <span class="toggle-label">文憑試作答模板</span>
+          </button>
+          <div class="note-body collapsed" id="note-dse-template"></div>
+        </div>
+        <div class="note-section" id="note-section-decision">
+          <button class="note-toggle" data-target="note-decision" aria-expanded="false">
+            <span class="toggle-icon">▸</span>
+            <span class="toggle-label">你的決策回顧</span>
+          </button>
+          <div class="note-body collapsed" id="note-decision"></div>
+        </div>
+        <div class="note-section" id="note-section-master" style="display:none;">
+          <button class="note-toggle" data-target="note-master" aria-expanded="false">
+            <span class="toggle-icon">▸</span>
+            <span class="toggle-label">★ 全運動總整理（失敗原因／評價／中日比較）</span>
+          </button>
+          <div class="note-body collapsed" id="note-master"></div>
+        </div>
+      </div>
+
+      <button class="pill-btn" id="quiz-continue">繼續旅程 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 甲午震撼時刻 Overlay ===== -->
+<div id="dramatic-moment" class="dramatic-moment" aria-hidden="true">
+  <div class="dramatic-content">
+    <p class="dm-date" id="dm-date"></p>
+    <p class="dm-place" id="dm-place"></p>
+    <div class="dm-divider"></div>
+    <div class="dm-letter" id="dm-letter"></div>
+    <p class="dm-signoff" id="dm-signoff"></p>
+    <button class="pill-btn pill-ghost" id="dm-continue">繼續 ▸</button>
+  </div>
+</div>
+
+<!-- ===== 章節過場（三幕電影式） ===== -->
+<div id="chapter-transition" class="screen">
+  <div class="transition-atmosphere" aria-hidden="true"></div>
+  <div class="transition-content">
+    <!-- 第一幕：年份（Cormorant 鉛字落下） -->
+    <p class="transition-year" id="transition-year" aria-hidden="true"></p>
+    <!-- 第二幕：章節標題（水平分裂出現） -->
+    <h2 class="transition-title">
+      <span class="title-top" id="transition-title-top"></span>
+      <span class="title-bot" id="transition-title-bot"></span>
+    </h2>
+    <p class="transition-subtitle" id="transition-subtitle"></p>
+    <div class="transition-divider" aria-hidden="true"></div>
+    <!-- 第三幕：敘述（模糊到清晰） -->
+    <p class="transition-text" id="transition-text"></p>
+    <button class="pill-btn" id="transition-continue">開始</button>
+  </div>
+  <button class="pill-btn pill-ghost transition-skip" id="transition-skip" hidden>跳過 ▸</button>
+</div>
+
+<!-- ===== 成就解鎖 Toast（全頁面通用） ===== -->
+<div id="achievement-toast" role="status" aria-live="polite"></div>
+
+<!-- ===== 引導提示 Tooltip（首次體驗用） ===== -->
+<div id="onboarding-tip" role="dialog" aria-live="polite" hidden>
+  <div class="ob-tip-inner">
+    <span class="ob-tip-icon" id="ob-tip-icon">💡</span>
+    <p class="ob-tip-text" id="ob-tip-text"></p>
+    <button class="ob-tip-close" id="ob-tip-close" type="button">明白了</button>
+  </div>
+</div>
+
+<!-- ===== 書記私函（章節間） ===== -->
+<div id="letter-screen" class="screen">
+  <div class="letter-scroll">
+    <div class="letter-paper">
+      <div class="letter-eyebrow">
+        <span class="letter-tag">沿海書記私函</span>
+        <span class="letter-date" id="letter-date"></span>
+      </div>
+      <div class="letter-content">
+        <p class="letter-opening" id="letter-opening"></p>
+        <div class="letter-body" id="letter-body"></div>
+        <div class="letter-signature">
+          <p>—— 沿海書記</p>
+          <p class="letter-place" id="letter-place"></p>
+          <span class="letter-seal" aria-hidden="true">記</span>
+        </div>
+        <!-- 附筆：複習題（spaced repetition）-->
+        <div class="letter-quiz" id="letter-quiz" hidden>
+          <div class="letter-quiz-head">附筆</div>
+          <p class="letter-quiz-prompt" id="letter-quiz-prompt"></p>
+          <div class="letter-quiz-options" id="letter-quiz-options"></div>
+          <p class="letter-quiz-feedback" id="letter-quiz-feedback" aria-live="polite"></p>
+        </div>
+      </div>
+      <button class="pill-btn pill-primary" id="letter-continue">繼續記錄 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 翻閱回憶錄頁面（從主選單進入） ===== -->
+<div id="memoirs-screen" class="screen">
+  <div class="memoirs-scroll">
+    <div class="memoirs-content">
+      <header class="memoirs-header">
+        <span class="memoirs-eyebrow">回憶錄總纂</span>
+        <h2>沿海書記之歷次回憶</h2>
+        <p class="memoirs-subtitle">所有通關記錄 · 成就解鎖陳列</p>
+        <div class="achv-divider"></div>
+      </header>
+
+      <!-- 成就牆 -->
+      <section class="memoirs-section">
+        <h3 class="achv-section-title"><span class="section-num">壹</span>成就解鎖（<span id="memoirs-ach-count">0</span>／<span id="memoirs-ach-total">0</span>）</h3>
+        <div class="memoirs-achievements" id="memoirs-achievements"></div>
+      </section>
+
+      <!-- 歷次通關紀錄 -->
+      <section class="memoirs-section">
+        <h3 class="achv-section-title"><span class="section-num">貳</span>歷次通關紀錄</h3>
+        <div class="memoirs-runs" id="memoirs-runs"></div>
+      </section>
+
+      <div class="memoirs-actions">
+        <button class="pill-btn pill-ghost" id="memoirs-back">← 返回主選單</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 通關成就頁：三十年見證總結 ===== -->
+<div id="achievement-screen" class="screen">
+  <div class="achv-scroll">
+    <div class="achv-content">
+      <header class="achv-header">
+        <span class="achv-eyebrow">三十年見證</span>
+        <h2>沿海書記之回憶錄</h2>
+        <p class="achv-subtitle">1842 — 1895</p>
+        <div class="achv-divider"></div>
+      </header>
+
+      <!-- 統計總覽 -->
+      <section class="achv-stats">
+        <div class="achv-stat">
+          <strong id="achv-decisions-count">0</strong>
+          <span>次進諫</span>
+        </div>
+        <div class="achv-stat">
+          <strong id="achv-evidence-count">0</strong>
+          <span>件卷宗</span>
+        </div>
+        <div class="achv-stat">
+          <strong id="achv-memorials-count">0</strong>
+          <span>份奏摺</span>
+        </div>
+        <div class="achv-stat">
+          <strong id="achv-years-count">0</strong>
+          <span>載春秋</span>
+        </div>
+      </section>
+
+      <!-- 三十年時間軸：4 章一覽 -->
+      <section class="achv-section">
+        <h3 class="achv-section-title"><span class="section-num">壹</span>三十年仕宦軌跡</h3>
+        <div class="achv-timeline" id="achv-timeline"></div>
+      </section>
+
+      <!-- 你的進諫足跡 -->
+      <section class="achv-section">
+        <h3 class="achv-section-title"><span class="section-num">貳</span>你的進諫足跡</h3>
+        <div class="achv-decisions" id="achv-decisions"></div>
+      </section>
+
+      <!-- 你呈交的奏摺 -->
+      <section class="achv-section">
+        <h3 class="achv-section-title"><span class="section-num">參</span>呈交御覽之奏摺</h3>
+        <div class="achv-memorials" id="achv-memorials"></div>
+      </section>
+
+      <!-- 你的史學立場 -->
+      <section class="achv-section achv-stance">
+        <h3 class="achv-section-title"><span class="section-num">肆</span>你的史學立場</h3>
+        <p class="achv-stance-text" id="achv-stance-text"></p>
+      </section>
+
+      <div class="achv-actions">
+        <button class="pill-btn pill-primary" id="achv-replay">重新開始</button>
+        <button class="ws-print-btn" id="achv-print" type="button">⎙ 列印此回憶錄</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 結局畫面 ===== -->
+<div id="ending-screen" class="screen">
+  <div class="ending-atmosphere" aria-hidden="true"></div>
+  <div class="ending-scroll">
+    <div class="ending-content">
+      <div class="ending-icon" aria-hidden="true">⚖</div>
+      <h2 id="ending-title"></h2>
+      <p class="ending-eyebrow">1895 · 馬關之後</p>
+      <div id="ending-text-body"></div>
+
+      <!-- 你的歷史足跡 -->
+      <section class="ending-section" id="ending-footprint">
+        <h3 class="ending-section-title"><span class="section-num">I</span>你的歷史足跡</h3>
+        <p id="ending-footprint-text"></p>
+      </section>
+
+      <!-- 史學評價 三段式 -->
+      <section class="ending-section" id="ending-historiography">
+        <h3 class="ending-section-title"><span class="section-num">II</span>史學評價</h3>
+
+        <article class="ending-voice voice-li">
+          <header class="voice-header">
+            <span class="voice-name">李鴻章</span>
+            <span class="voice-tag">改革者的辯護</span>
+          </header>
+          <blockquote id="voice-li-text"></blockquote>
+        </article>
+
+        <article class="ending-voice voice-liang">
+          <header class="voice-header">
+            <span class="voice-name">梁啟超</span>
+            <span class="voice-tag">後世學者的反思</span>
+          </header>
+          <blockquote id="voice-liang-text"></blockquote>
+        </article>
+
+        <article class="ending-voice voice-self">
+          <header class="voice-header">
+            <span class="voice-name">你</span>
+            <span class="voice-tag">站在歷史之外</span>
+          </header>
+          <p class="voice-prompt">三十年的迷夢過後，你會如何回答後人這一個問題：</p>
+          <blockquote class="voice-question" id="voice-self-question"></blockquote>
+        </article>
+      </section>
+
+      <button class="pill-btn" id="ending-restart">重新開始</button>
+    </div>
+  </div>
+</div>
+
+<script src="analytics.js?v=80"></script>
+<script src="data.js?v=80"></script>
+<script src="game.js?v=80"></script>
+</body>
+</html>
