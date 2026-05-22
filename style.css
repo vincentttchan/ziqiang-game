@@ -1095,6 +1095,19 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   align-items: center;
   justify-content: center;
   background: #000;
+  position: relative;
+}
+
+/* Ambient surround：用場景圖的模糊版填充側邊黑區 */
+#scene-area::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--scene-bg-url, none) center / cover no-repeat;
+  filter: blur(48px) brightness(0.28) saturate(0.55);
+  transform: scale(1.12);   /* 防止 blur 邊緣露出空白 */
+  pointer-events: none;
+  z-index: 0;
+  transition: background-image 0.85s ease;
 }
 
 /* Fixed 3:4 coordinate frame — hotspot % always maps correctly to image pixels */
@@ -1106,6 +1119,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   aspect-ratio: 3/4;
   position: relative;
   flex-shrink: 0;
+  z-index: 1;  /* 在 ambient surround ::before 之上 */
 }
 
 #scene-background {
@@ -3893,8 +3907,7 @@ button,
 }
 
 #scene-area {
-  background:
-    linear-gradient(180deg, #050505, #090908 48%, #050505);
+  background: #050302;  /* 基底色，ambient surround ::before 蓋在上面 */
 }
 #scene-frame {
   box-shadow:
@@ -7013,85 +7026,90 @@ button,
   justify-content: center;
 }
 
-/* 左右分欄容器 */
-.epigraph-split {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  position: relative;
-  z-index: 3;
-}
-
-/* 左欄：肖像 */
-.epigraph-portrait-col {
-  flex: 0 0 42%;
-  position: relative;
+/* ── 全幅肖像背景 ── */
+.epi-portrait-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   overflow: hidden;
-  opacity: 0;
-  animation: epi-fade 1.8s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
 }
-.epigraph-portrait-frame {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: flex-end;
-}
-.epigraph-portrait-img {
-  position: absolute;
-  inset: 0;
+.epi-portrait-full {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 15%;
-  filter: grayscale(0.55) sepia(0.5) brightness(0.65) contrast(1.1);
-}
-/* 右側邊緣漸變，融入引言欄 */
-.epigraph-portrait-vignette {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(to right, transparent 45%, rgba(26,17,8,0.7) 75%, #1a1108 100%),
-    linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.5) 100%);
-  pointer-events: none;
-}
-.epigraph-portrait-label {
-  position: relative;
-  z-index: 2;
-  padding: 2rem 1.5rem;
-  font-family: 'Noto Serif TC', serif;
-  font-size: 0.72rem;
-  letter-spacing: 0.38em;
-  color: rgba(220,200,160,0.45);
-  line-height: 2;
-  text-align: left;
-}
-.epigraph-portrait-label small {
-  display: block;
-  font-size: 0.62rem;
-  letter-spacing: 0.2em;
-  color: rgba(220,200,160,0.3);
+  object-position: 38% 12%;
+  filter: grayscale(0.45) sepia(0.55) brightness(0.72) contrast(1.08);
 }
 
-/* 層 0：右側背景幽靈光暈（不再用肖像，改用純色調） */
+/* ── 細格線（仿文件底紋） ── */
+.epi-grid {
+  position: absolute; inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(220,200,160,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(220,200,160,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: 0;
+  animation: epi-fade 2s ease 1.2s forwards;
+}
+
+/* ── 左下角人物標注 ── */
+.epi-name-tag {
+  position: absolute;
+  left: 2.8rem;
+  bottom: 2.8rem;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  opacity: 0;
+  animation: epi-fade 1.2s ease 1s forwards;
+}
+.epi-tag-name {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: 0.5em;
+  color: rgba(220,200,160,0.65);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+}
+.epi-tag-years {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.28em;
+  color: rgba(220,200,160,0.38);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+}
+
+/* 層 0：遮罩漸層（左側透明→右側漸暗，保持臉部可見、右側文字可讀） */
 #epigraph-screen::before {
   content: '';
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 70% 50%, rgba(180,130,70,0.08) 0%, transparent 60%);
+  background:
+    linear-gradient(to right,
+      rgba(20,13,6,0.05) 0%,
+      rgba(20,13,6,0.1)  35%,
+      rgba(20,13,6,0.55) 60%,
+      rgba(20,13,6,0.82) 100%),
+    linear-gradient(to bottom,
+      rgba(0,0,0,0.55) 0%,
+      transparent 20%,
+      transparent 72%,
+      rgba(0,0,0,0.7) 100%);
   pointer-events: none;
-  z-index: 0;
+  z-index: 2;
 }
 @keyframes epi-bg-drift {
   0%   { transform: scale(1.02) translate(0, 0); }
   100% { transform: scale(1.08) translate(-1%, -0.8%); }
 }
 
-/* 層 1：暗角，加強紀念場域感 */
+/* 層 1：四角暗角（強化電影感） */
 #epigraph-screen::after {
   content: '';
   position: absolute; inset: 0;
-  background:
-    radial-gradient(ellipse at center, transparent 25%, rgba(0,0,0,0.5) 75%, rgba(0,0,0,0.85) 100%),
-    linear-gradient(180deg, rgba(0,0,0,0.45) 0%, transparent 25%, transparent 70%, rgba(0,0,0,0.55) 100%);
+  background: radial-gradient(ellipse at 40% 45%, transparent 30%, rgba(0,0,0,0.65) 85%, rgba(0,0,0,0.9) 100%);
   pointer-events: none;
   z-index: 1;
 }
@@ -7109,15 +7127,17 @@ button,
 }
 
 .epigraph-content {
-  flex: 1;
-  padding: 0 4rem 0 3rem;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(52%, 560px);
+  padding: 0 4rem 0 2rem;
   text-align: left;
-  position: relative;
-  z-index: 3;
+  z-index: 10;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  max-width: 600px;
 }
 
 .epigraph-quote {
@@ -7251,24 +7271,30 @@ button,
 
 /* 響應式 */
 @media (max-width: 700px) {
-  .epigraph-split { flex-direction: column; }
-  .epigraph-portrait-col {
-    flex: 0 0 40vh;
-    max-height: 40vh;
-  }
-  .epigraph-portrait-vignette {
+  /* 手機：肖像上半、文字下半 */
+  #epigraph-screen::before {
     background:
-      linear-gradient(to bottom, transparent 50%, rgba(26,17,8,0.8) 80%, #1a1108 100%);
+      linear-gradient(to bottom,
+        rgba(20,13,6,0.05) 0%,
+        rgba(20,13,6,0.1)  40%,
+        rgba(20,13,6,0.7)  65%,
+        rgba(20,13,6,0.92) 100%);
   }
+  .epi-portrait-full { object-position: 38% 8%; }
   .epigraph-content {
-    padding: 2rem 1.5rem 4rem;
-    text-align: left;
-    max-width: 100%;
+    position: absolute;
+    right: auto; top: auto;
+    left: 0; bottom: 5rem;
+    transform: none;
+    width: 100%;
+    padding: 1.5rem 1.8rem 0;
   }
-  .quote-text { font-size: clamp(0.98rem, 4.5vw, 1.25rem); line-height: 2.1; letter-spacing: 0.14em; }
-  .cite-name { font-size: 0.82rem; letter-spacing: 0.26em; }
-  .cite-source { font-size: 0.66rem; }
+  .quote-text { font-size: clamp(1rem, 4.5vw, 1.22rem); line-height: 2; letter-spacing: 0.14em; }
+  .cite-name { font-size: 0.8rem; letter-spacing: 0.26em; }
+  .cite-source { font-size: 0.64rem; }
+  .epi-name-tag { left: 1.5rem; bottom: auto; top: 1.5rem; }
   .epigraph-continue { bottom: 1.5rem; right: 1.5rem; font-size: 0.82rem; }
+  .epigraph-divider { margin: 1.6rem 0 1.4rem; }
 }
 
 /* ══════════════════════════════════════════════════════
