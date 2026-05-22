@@ -267,7 +267,7 @@
         <button class="dt-tab active" data-tab="identity" role="tab">壹 · 身 份</button>
         <button class="dt-tab" data-tab="mission"  role="tab">貳 · 職 責</button>
         <button class="dt-tab" data-tab="play"     role="tab">參 · 玩 法</button>
-        <button class="dt-tab" data-tab="coverage" role="tab">肆 · 考 點</button>
+        <button class="dt-tab" data-tab="achievements" role="tab">肆 · 成 就</button>
       </nav>
 
       <!-- 分頁內容 -->
@@ -304,24 +304,49 @@
           <p class="dp-note">章節完成後自動儲存進度。</p>
         </article>
 
-        <!-- 肆 · 考點 -->
-        <article class="dp-panel" data-panel="coverage">
-          <p class="dp-lead">全面涵蓋 DSE 中國歷史科洋務運動範圍：</p>
-          <div class="dp-tags">
-            <span class="dp-tag">背 景</span>
-            <span class="dp-tag">前期 · 強兵措施</span>
-            <span class="dp-tag">後期 · 求富措施</span>
-            <span class="dp-tag">目標轉變原因</span>
-            <span class="dp-tag">失 敗 原 因</span>
-            <span class="dp-tag">明治維新比較</span>
+        <!-- 肆 · 成就 -->
+        <article class="dp-panel" data-panel="achievements">
+          <p class="dp-lead">三十年旅途中，共有 <strong>14 項成就</strong> 待你解鎖：</p>
+          <div class="dp-ach-grid">
+            <div class="dp-ach-cat">
+              <span class="dp-ach-icon">⚔</span>
+              <span class="dp-ach-name">進度成就</span>
+              <span class="dp-ach-count">4 項</span>
+              <span class="dp-ach-hint">推進每一章節，親歷時代轉折</span>
+            </div>
+            <div class="dp-ach-cat">
+              <span class="dp-ach-icon">🔍</span>
+              <span class="dp-ach-name">蒐證成就</span>
+              <span class="dp-ach-count">2 項</span>
+              <span class="dp-ach-hint">用心蒐齊散落各處的卷宗</span>
+            </div>
+            <div class="dp-ach-cat">
+              <span class="dp-ach-icon">☯</span>
+              <span class="dp-ach-name">決策成就</span>
+              <span class="dp-ach-count">3 項</span>
+              <span class="dp-ach-hint">14 次進諫，立場決定你是誰</span>
+            </div>
+            <div class="dp-ach-cat">
+              <span class="dp-ach-icon">📜</span>
+              <span class="dp-ach-name">奏摺成就</span>
+              <span class="dp-ach-count">3 項</span>
+              <span class="dp-ach-hint">論點面向是否周全、立論是否扎實</span>
+            </div>
+            <div class="dp-ach-cat">
+              <span class="dp-ach-icon">🌟</span>
+              <span class="dp-ach-name">特殊成就</span>
+              <span class="dp-ach-count">2 項</span>
+              <span class="dp-ach-hint">隱藏挑戰，唯心細者得之</span>
+            </div>
           </div>
-          <p class="dp-quote">「洋務運動的失敗根源是<strong>結構性的</strong>，不是個別決策的失誤。」</p>
+          <p class="dp-quote">「重玩可以解鎖不同的決策路線——每次重來，都是新的見證。」</p>
         </article>
       </div>
 
       <!-- 底部按鈕 -->
       <div class="dossier-actions">
         <button class="pill-btn pill-ghost"   id="about-back">← 返回主選單</button>
+        <button class="pill-btn pill-ghost"   id="about-next"  style="display:none;">下 一 頁 ▸</button>
         <button class="pill-btn pill-primary" id="about-start" style="display:none;">開 始 遊 戲 ▸</button>
       </div>
 

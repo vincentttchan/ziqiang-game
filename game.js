@@ -997,25 +997,52 @@ function bindMenu() {
   }
 
   function showBriefingThenStart() {
-    const aboutScreen = $('about-screen');
-    const startBtn    = $('about-start');
-    const backBtn     = $('about-back');
+    const startBtn = $('about-start');
+    const nextBtn  = $('about-next');
+    const backBtn  = $('about-back');
+    const tabs     = Array.from(document.querySelectorAll('.dt-tab'));
+    const panels   = Array.from(document.querySelectorAll('.dp-panel'));
 
-    // 切換按鈕：隱藏「返回主選單」，顯示「開始遊戲」
+    // 引導模式：隱藏「返回主選單」，顯示「下一頁」
     backBtn.style.display  = 'none';
-    startBtn.style.display = '';
+    startBtn.style.display = 'none';
+    nextBtn.style.display  = '';
 
     showScreen('about-screen');
-    // 重置至「壹·身份」分頁
-    document.querySelectorAll('.dt-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
-    document.querySelectorAll('.dp-panel').forEach((p, i) => p.classList.toggle('active', i === 0));
-    const panels = document.querySelector('.dossier-panels');
-    if (panels) panels.scrollTop = 0;
 
+    // 重置至首頁
+    let currentIdx = 0;
+    const showIndex = (idx) => {
+      currentIdx = idx;
+      tabs.forEach((t, i) => t.classList.toggle('active', i === idx));
+      panels.forEach((p, i) => p.classList.toggle('active', i === idx));
+      const sc = document.querySelector('.dossier-panels');
+      if (sc) sc.scrollTop = 0;
+      // 最後一頁：切換為「開始遊戲」
+      if (idx === tabs.length - 1) {
+        nextBtn.style.display  = 'none';
+        startBtn.style.display = '';
+      } else {
+        nextBtn.style.display  = '';
+        startBtn.style.display = 'none';
+      }
+    };
+
+    showIndex(0);
+
+    const onNext = () => showIndex(Math.min(currentIdx + 1, tabs.length - 1));
+    const onTabClick = (e) => {
+      const idx = tabs.indexOf(e.currentTarget);
+      if (idx >= 0) showIndex(idx);
+    };
     const onStart = () => {
+      // 解除事件
+      nextBtn.removeEventListener('click', onNext);
+      tabs.forEach(t => t.removeEventListener('click', onTabClick));
       startBtn.removeEventListener('click', onStart);
-      // 恢復按鈕原狀（下次從選單進案卷說明時正常顯示）
+      // 恢復按鈕原狀
       backBtn.style.display  = '';
+      nextBtn.style.display  = 'none';
       startBtn.style.display = 'none';
 
       const menu = $('main-menu');
@@ -1027,6 +1054,8 @@ function bindMenu() {
       }, 650);
     };
 
+    nextBtn.addEventListener('click', onNext);
+    tabs.forEach(t => t.addEventListener('click', onTabClick));
     startBtn.addEventListener('click', onStart);
   }
 

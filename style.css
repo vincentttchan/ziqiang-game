@@ -1287,6 +1287,57 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   margin-top: 1rem;
 }
 
+/* 成就分類格 */
+.dp-ach-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.7rem;
+  margin: 1rem 0 0.4rem;
+}
+.dp-ach-cat {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "icon name count"
+    "icon hint hint";
+  gap: 0.2rem 0.7rem;
+  padding: 0.7rem 0.95rem;
+  background: rgba(220,200,160,0.04);
+  border: 1px solid rgba(220,200,160,0.16);
+  border-left: 2px solid rgba(220,170,100,0.5);
+  border-radius: 2px;
+  align-items: center;
+}
+.dp-ach-icon {
+  grid-area: icon;
+  font-size: 1.5rem;
+  color: rgba(232,216,184,0.8);
+  align-self: start;
+  padding-top: 0.1rem;
+}
+.dp-ach-name {
+  grid-area: name;
+  font-size: 0.92rem;
+  letter-spacing: 0.18em;
+  color: #ead9b3;
+}
+.dp-ach-count {
+  grid-area: count;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  color: rgba(220,170,100,0.78);
+  border: 1px solid rgba(220,170,100,0.35);
+  padding: 0.1rem 0.5rem;
+  border-radius: 2px;
+}
+.dp-ach-hint {
+  grid-area: hint;
+  font-size: 0.75rem;
+  color: rgba(220,200,160,0.55);
+  line-height: 1.7;
+  letter-spacing: 0.04em;
+}
+
 /* 底部按鈕 */
 .dossier-actions {
   display: flex;
