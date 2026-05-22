@@ -10789,3 +10789,80 @@ button,
   .login-actions { flex-direction: column-reverse; gap: 0.6rem; }
   .login-actions .pill-ghost { flex: 1; }
 }
+
+/* ══════════════════════════════════════════════════════
+   工具列遷移：從 scene-frame 移入時間軸欄右端
+   ── 完全不遮擋場景圖片
+   ══════════════════════════════════════════════════════ */
+
+/* 時間軸欄：改為橫向 flex，左側 .timeline-main 撐滿，右側 #toolbar */
+#timeline {
+  flex-direction: row !important;
+  align-items: center !important;
+  padding: 0 0.75rem 0 1.5rem !important;
+  gap: 0.5rem;
+}
+
+/* 包住 track + info 的容器 */
+.timeline-main {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+}
+
+/* toolbar：覆寫所有 position:absolute 舊規則 */
+#toolbar {
+  position: static !important;
+  flex-direction: row !important;
+  flex-shrink: 0 !important;
+  gap: 0.2rem !important;
+  z-index: auto !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+}
+
+#toolbar button {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,0.03) !important;
+  border: 1px solid rgba(139,111,74,0.2) !important;
+  color: rgba(201,168,118,0.55) !important;
+  font-size: 0 !important;   /* SVG only, no text */
+  padding: 0 !important;
+  backdrop-filter: none !important;
+  transition: color 0.2s, border-color 0.2s, background 0.2s !important;
+}
+
+#toolbar button:hover,
+#toolbar button:focus-visible {
+  background: rgba(90,70,40,0.5) !important;
+  color: var(--gold-light) !important;
+  border-color: rgba(201,168,118,0.55) !important;
+  transform: none !important;
+  outline: none !important;
+}
+
+.tb-icon {
+  width: 14px !important;
+  height: 14px !important;
+  display: block !important;
+}
+
+/* 手機直向：按鈕再略縮 */
+@media (orientation: portrait) and (max-width: 599px) {
+  #toolbar button { width: 24px !important; height: 24px !important; }
+  .tb-icon { width: 12px !important; height: 12px !important; }
+  #timeline { padding: 0 0.5rem 0 1rem !important; }
+}
+
+/* iPad 直式：觸控目標不需要強制放大（已在 timeline 欄，夠大） */
+@media (orientation: portrait) and (min-width: 600px) and (max-width: 1100px) {
+  #toolbar button { width: 30px !important; height: 30px !important; }
+  .tb-icon { width: 15px !important; height: 15px !important; }
+}
