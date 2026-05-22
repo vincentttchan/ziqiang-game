@@ -1089,10 +1089,10 @@ function bindMenu() {
     toggleNoteSection(btn.dataset.target);
   });
   $('transition-continue').addEventListener('click', onTransitionContinue);
-  $('transition-skip').addEventListener('click', onTransitionContinue);
+  // transition-skip 按鈕已移除
   // 整個過場區也可點擊跳過（不影響 continue 按鈕）
   $('chapter-transition').addEventListener('click', e => {
-    if (e.target.id === 'transition-continue' || e.target.id === 'transition-skip') return;
+    if (e.target.id === 'transition-continue') return;
     // 雙擊任意位置可加速到第三幕末
     jumpTransitionToEnd();
   });
@@ -1302,10 +1302,7 @@ function showChapterTransition(data, onComplete) {
   continueCallback = null;
   $('transition-continue')._cb = onComplete;
 
-  // 顯示跳過按鈕
-  const skipBtn = $('transition-skip');
-  skipBtn.hidden = false;
-  skipBtn._cb = onComplete;
+  // 跳過按鈕已移除
 
   // 三幕順序播放
   inner.classList.add('act-1');

@@ -45,31 +45,46 @@
 <!-- ===== 引言頁面（首次入場） ===== -->
 <div id="epigraph-screen" class="screen active">
   <div class="epigraph-grain" aria-hidden="true"></div>
-  <div class="epigraph-content">
 
-    <!-- 第一段：李鴻章自評 -->
-    <blockquote class="epigraph-quote epi-quote-1">
-      <p class="quote-text">「中國數千年來，<br>未有之大變局也。」</p>
-      <footer class="quote-cite">
-        <span class="cite-name">— 李鴻章</span>
-        <span class="cite-source">奏摺　一八七二年</span>
-      </footer>
-    </blockquote>
+  <!-- 左右分欄佈局 -->
+  <div class="epigraph-split">
 
-    <!-- 兩段之間的分隔線 -->
-    <div class="epigraph-divider" aria-hidden="true">
-      <span class="divider-line"></span>
+    <!-- 左欄：李鴻章肖像 -->
+    <div class="epigraph-portrait-col" aria-hidden="true">
+      <div class="epigraph-portrait-frame">
+        <img src="images/portraits/li-hongzhang.jpg" alt="李鴻章" class="epigraph-portrait-img">
+        <div class="epigraph-portrait-vignette"></div>
+        <span class="epigraph-portrait-label">李鴻章<br><small>1823 — 1901</small></span>
+      </div>
     </div>
 
-    <!-- 第二段：梁啟超評語 -->
-    <blockquote class="epigraph-quote epi-quote-2">
-      <p class="quote-text">「吾敬李鴻章之才，<br>惜李鴻章之識，<br>而悲李鴻章之遇。」</p>
-      <footer class="quote-cite">
-        <span class="cite-name">— 梁啟超</span>
-        <span class="cite-source">《李鴻章傳》　一九〇一年</span>
-      </footer>
-    </blockquote>
+    <!-- 右欄：引言文字 -->
+    <div class="epigraph-content">
 
+      <!-- 第一段：李鴻章自評 -->
+      <blockquote class="epigraph-quote epi-quote-1">
+        <p class="quote-text">「中國數千年來，<br>未有之大變局也。」</p>
+        <footer class="quote-cite">
+          <span class="cite-name">— 李鴻章</span>
+          <span class="cite-source">奏摺　一八七二年</span>
+        </footer>
+      </blockquote>
+
+      <!-- 兩段之間的分隔線 -->
+      <div class="epigraph-divider" aria-hidden="true">
+        <span class="divider-line"></span>
+      </div>
+
+      <!-- 第二段：梁啟超評語 -->
+      <blockquote class="epigraph-quote epi-quote-2">
+        <p class="quote-text">「吾敬李鴻章之才，<br>惜李鴻章之識，<br>而悲李鴻章之遇。」</p>
+        <footer class="quote-cite">
+          <span class="cite-name">— 梁啟超</span>
+          <span class="cite-source">《李鴻章傳》　一九〇一年</span>
+        </footer>
+      </blockquote>
+
+    </div>
   </div>
 
   <!-- 繼續按鈕（右下角，極簡） -->
@@ -90,12 +105,12 @@
       <span class="login-field-label">班別</span>
       <select id="login-class" class="login-input" required>
         <option value="">— 請選擇 —</option>
-        <option value="S4A">S4A</option><option value="S4B">S4B</option>
-        <option value="S4C">S4C</option><option value="S4D">S4D</option>
-        <option value="S5A">S5A</option><option value="S5B">S5B</option>
-        <option value="S5C">S5C</option><option value="S5D">S5D</option>
-        <option value="S6A">S6A</option><option value="S6B">S6B</option>
-        <option value="S6C">S6C</option><option value="S6D">S6D</option>
+        <option value="1A">1A</option><option value="1B">1B</option><option value="1C">1C</option><option value="1D">1D</option>
+        <option value="2A">2A</option><option value="2B">2B</option><option value="2C">2C</option><option value="2D">2D</option>
+        <option value="3A">3A</option><option value="3B">3B</option><option value="3C">3C</option><option value="3D">3D</option>
+        <option value="4A">4A</option><option value="4B">4B</option><option value="4C">4C</option><option value="4D">4D</option>
+        <option value="5A">5A</option><option value="5B">5B</option><option value="5C">5C</option><option value="5D">5D</option>
+        <option value="6A">6A</option><option value="6B">6B</option><option value="6C">6C</option><option value="6D">6D</option>
         <option value="other">其他（如教師試玩）</option>
       </select>
     </label>
@@ -524,7 +539,7 @@
     <p class="transition-text" id="transition-text"></p>
     <button class="pill-btn" id="transition-continue">開始</button>
   </div>
-  <button class="pill-btn pill-ghost transition-skip" id="transition-skip" hidden>跳過 ▸</button>
+  <!-- 跳過按鈕已移除 -->
 </div>
 
 <!-- ===== 成就解鎖 Toast（全頁面通用） ===== -->
