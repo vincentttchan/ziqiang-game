@@ -201,38 +201,130 @@
 
 <!-- ===== 關於畫面 ===== -->
 <div id="about-screen" class="screen">
-  <div class="about-scroll">
-    <div class="about-content">
-      <h2>關於本遊戲</h2>
-      <p>本遊戲以洋務運動為題材，帶領玩家從 1839 年鴉片戰爭前夕，一路經歷英法聯軍之役、太平天國、總理衙門成立、各項自強措施，直至 1894 年甲午戰爭的慘敗。</p>
+  <div class="dossier-grid-bg" aria-hidden="true"></div>
 
-      <h3>你的身份</h3>
-      <p>你是一位<strong>1820 年代生於沿海的年輕士子</strong>。略懂洋務、通曉文書。1842 年，因翻譯英文文書之能，被耆英延為<strong>書記</strong>。此後三十年，你輾轉於各位洋務派、守舊派之間：耆英、奕訢、曾國藩、李鴻章、張之洞——你親歷整個時代的興衰。</p>
-      <p>你的姓名不重要——重要的是你<strong>蒐集的卷宗</strong>、<strong>親聞的議論</strong>、<strong>默思的判斷</strong>。每一場景，你<strong>蒐集史料、聆聽爭辯、向重臣進言</strong>。章末，你<strong>將卷宗整理成一份奏摺</strong>，呈交御覽——這份奏摺，亦是給未來史學家的證詞。</p>
+  <div class="dossier">
 
-      <h3>設計理念</h3>
-      <p>洋務運動的失敗根源是<strong>結構性的</strong>，不是個別決策的失誤。本遊戲讓你親歷李鴻章、奕訢、曾國藩等改革者所面對的兩難——你的進言會影響你<strong>理解歷史的深度</strong>，但無法改寫歷史的結局。這是一場必然走向失敗的時代悲劇。</p>
+    <!-- ═══ 左欄：書記立繪 ═══ -->
+    <div class="dossier-portrait">
+      <img src="images/IMG-00.jpg" alt="書記" class="dossier-img">
+      <div class="dossier-img-vignette" aria-hidden="true"></div>
 
-      <h3>玩法</h3>
-      <ol>
-        <li>於場景中點擊發光物件，<strong>蒐集卷宗（史料線索）</strong></li>
-        <li>判讀關鍵卷宗的歷史意義</li>
-        <li>聆聽重臣對話與守舊派爭辯</li>
-        <li><strong>向重臣進言</strong>——你的立場影響後續敘事</li>
-        <li>援引你蒐集的卷宗，反駁對立陣營</li>
-        <li>章末進入<strong>奏摺工作坊</strong>——將你蒐集的卷宗整理成完整論點</li>
-      </ol>
-
-      <h3>文憑試考點覆蓋</h3>
-      <p>全面涵蓋洋務運動的背景、前期強兵措施、後期求富措施、目標轉變原因、失敗原因，並與明治維新進行比較。</p>
-
-      <h3>進度保存</h3>
-      <p>章節完成後自動儲存。下次開啟時，主選單會詢問是否繼續上次的旅程。</p>
-
-      <div class="about-actions">
-        <button class="pill-btn pill-ghost" id="about-back">← 返回主選單</button>
-        <button class="pill-btn pill-primary" id="about-start" style="display:none;">開始遊戲 ▸</button>
+      <!-- 頂部：機密標記 -->
+      <div class="dossier-classified">
+        <span class="dc-dot"></span>
+        <span class="dc-text">機 密 · 總 理 衙 門 檔 案</span>
+        <span class="dc-id">卷宗 · 自-壹</span>
       </div>
+
+      <!-- 朱紅印章 -->
+      <div class="dossier-stamp" aria-hidden="true">機<br>密</div>
+
+      <!-- 底部：身份標識 -->
+      <div class="dossier-identity">
+        <div class="di-row">
+          <span class="di-label">姓 名</span>
+          <span class="di-value">未 詳</span>
+        </div>
+        <div class="di-row">
+          <span class="di-label">職 銜</span>
+          <span class="di-value">書 記</span>
+        </div>
+        <div class="di-row">
+          <span class="di-label">生 卒</span>
+          <span class="di-value">1820 — ?</span>
+        </div>
+      </div>
+
+      <!-- Dark 風格連線標註 -->
+      <svg class="dossier-connect" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <line x1="35" y1="42" x2="98" y2="22" stroke="rgba(220,200,160,0.25)" stroke-width="0.2"/>
+        <line x1="38" y1="50" x2="98" y2="50" stroke="rgba(220,200,160,0.25)" stroke-width="0.2"/>
+        <line x1="35" y1="58" x2="98" y2="78" stroke="rgba(220,200,160,0.25)" stroke-width="0.2"/>
+        <circle cx="35" cy="42" r="0.6" fill="rgba(220,200,160,0.6)"/>
+        <circle cx="38" cy="50" r="0.6" fill="rgba(220,200,160,0.6)"/>
+        <circle cx="35" cy="58" r="0.6" fill="rgba(220,200,160,0.6)"/>
+      </svg>
+    </div>
+
+    <!-- ═══ 右欄：檔案資訊 ═══ -->
+    <div class="dossier-info">
+
+      <!-- 標頭 -->
+      <header class="dossier-header">
+        <div class="dh-meta">
+          <span>SCH—01</span>
+          <span>—</span>
+          <span>道光 二十二年 三月</span>
+        </div>
+        <h2 class="dh-title">書 記 檔 案</h2>
+        <p class="dh-subtitle">自 強 之 路 · 角 色 簡 介</p>
+        <div class="dh-line"></div>
+      </header>
+
+      <!-- 分頁按鈕 -->
+      <nav class="dossier-tabs" role="tablist">
+        <button class="dt-tab active" data-tab="identity" role="tab">壹 · 身 份</button>
+        <button class="dt-tab" data-tab="mission"  role="tab">貳 · 職 責</button>
+        <button class="dt-tab" data-tab="play"     role="tab">參 · 玩 法</button>
+        <button class="dt-tab" data-tab="coverage" role="tab">肆 · 考 點</button>
+      </nav>
+
+      <!-- 分頁內容 -->
+      <div class="dossier-panels">
+
+        <!-- 壹 · 身份 -->
+        <article class="dp-panel active" data-panel="identity">
+          <p class="dp-lead">你是一位 1820 年代生於<strong>沿海的年輕士子</strong>。略懂洋務、通曉文書。</p>
+          <p>1842 年，因翻譯英文文書之能，被<strong>耆英</strong>延為<strong>書記</strong>。此後三十年，你輾轉於各位洋務派、守舊派之間——<strong>奕訢、曾國藩、李鴻章、張之洞</strong>，你親歷整個時代的興衰。</p>
+          <p class="dp-quote">「你的姓名不重要——重要的是你<strong>蒐集的卷宗</strong>、親聞的議論、默思的判斷。」</p>
+        </article>
+
+        <!-- 貳 · 職責 -->
+        <article class="dp-panel" data-panel="mission">
+          <ul class="dp-list">
+            <li><span class="dp-num">一</span>於每一場景<strong>蒐集史料</strong>，留作他日佐證</li>
+            <li><span class="dp-num">二</span>聆聽重臣對話與守舊派<strong>爭辯</strong></li>
+            <li><span class="dp-num">三</span>於關鍵時刻<strong>向重臣進言</strong>，立場決定後續敘事</li>
+            <li><span class="dp-num">四</span>章末整理卷宗，撰成<strong>奏摺</strong>呈御覽</li>
+          </ul>
+          <p class="dp-quote">「這份奏摺，亦是給未來史學家的證詞。」</p>
+        </article>
+
+        <!-- 參 · 玩法 -->
+        <article class="dp-panel" data-panel="play">
+          <ol class="dp-steps">
+            <li>於場景中點擊<strong>發光物件</strong>，蒐集卷宗（史料線索）</li>
+            <li>判讀關鍵卷宗的<strong>歷史意義</strong></li>
+            <li>聆聽重臣對話與守舊派爭辯</li>
+            <li>向重臣進言——你的<strong>立場影響後續敘事</strong></li>
+            <li>援引蒐集的卷宗，<strong>反駁對立陣營</strong></li>
+            <li>章末進入<strong>奏摺工作坊</strong>，整理論點</li>
+          </ol>
+          <p class="dp-note">章節完成後自動儲存進度。</p>
+        </article>
+
+        <!-- 肆 · 考點 -->
+        <article class="dp-panel" data-panel="coverage">
+          <p class="dp-lead">全面涵蓋 DSE 中國歷史科洋務運動範圍：</p>
+          <div class="dp-tags">
+            <span class="dp-tag">背 景</span>
+            <span class="dp-tag">前期 · 強兵措施</span>
+            <span class="dp-tag">後期 · 求富措施</span>
+            <span class="dp-tag">目標轉變原因</span>
+            <span class="dp-tag">失 敗 原 因</span>
+            <span class="dp-tag">明治維新比較</span>
+          </div>
+          <p class="dp-quote">「洋務運動的失敗根源是<strong>結構性的</strong>，不是個別決策的失誤。」</p>
+        </article>
+      </div>
+
+      <!-- 底部按鈕 -->
+      <div class="dossier-actions">
+        <button class="pill-btn pill-ghost"   id="about-back">← 返回主選單</button>
+        <button class="pill-btn pill-primary" id="about-start" style="display:none;">開 始 遊 戲 ▸</button>
+      </div>
+
     </div>
   </div>
 </div>

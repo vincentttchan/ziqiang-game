@@ -1006,10 +1006,11 @@ function bindMenu() {
     startBtn.style.display = '';
 
     showScreen('about-screen');
-    aboutScreen.scrollTop = 0;
-    if (aboutScreen.querySelector('.about-scroll')) {
-      aboutScreen.querySelector('.about-scroll').scrollTop = 0;
-    }
+    // 重置至「壹·身份」分頁
+    document.querySelectorAll('.dt-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
+    document.querySelectorAll('.dp-panel').forEach((p, i) => p.classList.toggle('active', i === 0));
+    const panels = document.querySelector('.dossier-panels');
+    if (panels) panels.scrollTop = 0;
 
     const onStart = () => {
       startBtn.removeEventListener('click', onStart);
@@ -1115,6 +1116,20 @@ function bindMenu() {
   const memoirsBack = $('memoirs-back');
   if (memoirsBack) memoirsBack.addEventListener('click', () => showScreen('main-menu'));
   $('about-back').addEventListener('click', () => showScreen('main-menu'));
+
+  // 案卷檔案卡：分頁切換
+  document.querySelectorAll('.dt-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      document.querySelectorAll('.dt-tab').forEach(t => t.classList.toggle('active', t === tab));
+      document.querySelectorAll('.dp-panel').forEach(p => {
+        p.classList.toggle('active', p.dataset.panel === target);
+      });
+      // 重置滾動位置
+      const panels = document.querySelector('.dossier-panels');
+      if (panels) panels.scrollTop = 0;
+    });
+  });
   $('quiz-continue').addEventListener('click', onQuizContinue);
 
   // 存檔提示 modal
