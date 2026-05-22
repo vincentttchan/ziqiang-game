@@ -7426,15 +7426,15 @@ button,
     max-height: 56dvh;
   }
 }
-/* 在 landscape 時，game-screen grid 需放寬最下排 */
+/* 在 landscape 時，game-screen grid 需放寬最下排（對齊 4 列佈局：timeline/scene/hud/dialogue） */
 @media (orientation: landscape) {
   #game-screen:has(#dialogue-area.decision-expand) {
-    grid-template-rows: var(--timeline-h) 1fr auto;
+    grid-template-rows: var(--timeline-h) 1fr var(--hud-h) auto;
   }
 }
 @media (orientation: portrait) {
   #game-screen:has(#dialogue-area.decision-expand) {
-    grid-template-rows: var(--timeline-h) 1fr auto;
+    grid-template-rows: var(--timeline-h) 1fr var(--hud-h) auto;
   }
 }
 
@@ -7903,12 +7903,12 @@ button,
 }
 @media (orientation: landscape) {
   #game-screen:has(#dialogue-area.dialogue-collapsed) {
-    grid-template-rows: var(--timeline-h) 1fr 0;
+    grid-template-rows: var(--timeline-h) 1fr var(--hud-h) 0;
   }
 }
 @media (orientation: portrait) {
   #game-screen:has(#dialogue-area.dialogue-collapsed) {
-    grid-template-rows: var(--timeline-h) 1fr 0;
+    grid-template-rows: var(--timeline-h) 1fr var(--hud-h) 0;
   }
 }
 
@@ -8001,16 +8001,11 @@ button,
   }
 }
 
-/* 大屏桌面（≥1280px）：縮短時間軸和對白區高度，把空間還給場景 */
+/* 大屏桌面（≥1280px）：僅縮短時間軸，把空間還給場景；對白高度不動，避免選項被截斷 */
 @media (min-width: 1280px) and (orientation: landscape) {
   :root {
     --timeline-h: 52px;
-    --dialogue-h: 148px;
-  }
-  /* 對白區字型稍微緊湊 */
-  #dialogue-text {
-    font-size: 0.97rem;
-    line-height: 1.85;
+    /* --dialogue-h 保持 175px，不縮小，以免選項被 grid row 截斷 */
   }
   /* 時間軸資訊微調 */
   #timeline {
