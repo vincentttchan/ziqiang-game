@@ -963,15 +963,41 @@ function bindMenu() {
   function beginStartSequence() {
     clearProgress();
     resetState();
-    const menu = $('main-menu');
-    menu.classList.add('exiting');
-    setTimeout(() => {
-      menu.classList.add('fading-out');
-      startGame('chapter1');
+    // 先顯示案卷說明，讀完再開始遊戲
+    showBriefingThenStart();
+  }
+
+  function showBriefingThenStart() {
+    const aboutScreen = $('about-screen');
+    const startBtn    = $('about-start');
+    const backBtn     = $('about-back');
+
+    // 切換按鈕：隱藏「返回主選單」，顯示「開始遊戲」
+    backBtn.style.display  = 'none';
+    startBtn.style.display = '';
+
+    showScreen('about-screen');
+    aboutScreen.scrollTop = 0;
+    if (aboutScreen.querySelector('.about-scroll')) {
+      aboutScreen.querySelector('.about-scroll').scrollTop = 0;
+    }
+
+    const onStart = () => {
+      startBtn.removeEventListener('click', onStart);
+      // 恢復按鈕原狀（下次從選單進案卷說明時正常顯示）
+      backBtn.style.display  = '';
+      startBtn.style.display = 'none';
+
+      const menu = $('main-menu');
+      menu.classList.add('exiting');
       setTimeout(() => {
-        menu.classList.remove('exiting', 'fading-out');
-      }, 700);
-    }, 650);
+        menu.classList.add('fading-out');
+        startGame('chapter1');
+        setTimeout(() => menu.classList.remove('exiting', 'fading-out'), 700);
+      }, 650);
+    };
+
+    startBtn.addEventListener('click', onStart);
   }
 
   // ── 學生登入 modal ─────────────────────────────

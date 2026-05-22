@@ -966,6 +966,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .about-content ul, .about-content ol { padding-left: 1.8rem; }
 .about-content strong { color: var(--gold); }
 .about-content .pill-btn { margin-top: 2.5rem; }
+.about-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  flex-wrap: wrap;
+}
+.about-actions .pill-btn { margin-top: 0; flex: 1; min-width: 140px; }
 
 /* ══════════════════════════════════════════════════════
    遊戲主畫面 ── CSS Grid
@@ -1103,11 +1110,11 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   content: '';
   position: absolute; inset: 0;
   background: var(--scene-bg-url, none) center / cover no-repeat;
-  filter: blur(48px) brightness(0.28) saturate(0.55);
-  transform: scale(1.12);   /* 防止 blur 邊緣露出空白 */
+  filter: blur(52px) brightness(0.42) saturate(0.7) sepia(0.18);
+  transform: scale(1.14);   /* 防止 blur 邊緣露出空白 */
   pointer-events: none;
   z-index: 0;
-  transition: background-image 0.85s ease;
+  transition: opacity 0.9s ease;
 }
 
 /* Fixed 3:4 coordinate frame — hotspot % always maps correctly to image pixels */
