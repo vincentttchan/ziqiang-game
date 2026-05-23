@@ -8813,6 +8813,16 @@ button,
   #dialogue-area.decision-expand {
     min-height: 320px !important;
     max-height: 70dvh !important;
+    /* 底部留白，避免選項被固定定位的史料庫 handle（50px）遮蓋 */
+    padding-bottom: calc(50px + 1rem) !important;
+  }
+
+  /* decision-expand 期間，史料庫 handle 收起並暫時不可互動，
+     讓整個螢幕底部讓位給選項按鈕 */
+  #game-screen:has(#dialogue-area.decision-expand) #evidence-panel {
+    transform: translateY(100%) !important;
+    transition: transform 0.25s ease !important;
+    pointer-events: none !important;
   }
 }
 /* 確保 dialogue-text 顯示完整 prompt（不被截斷） */
