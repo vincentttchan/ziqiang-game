@@ -10876,3 +10876,59 @@ button,
   #toolbar button { width: 30px !important; height: 30px !important; }
   .tb-icon { width: 15px !important; height: 15px !important; }
 }
+
+/* ──────────────────────────────────────────────────────────────────
+   v75 │ DSE 框架四維分類（時代背景／前期強兵／後期富國 + 改革阻力）
+   ────────────────────────────────────────────────────────────────── */
+
+/* 新分類色彩變數（沿用舊調色板，建立語意別名） */
+:root {
+  --cat-background:  var(--cat-thought);  /* 時代背景 — 紫灰（沉思感）*/
+  --cat-strengthen:  var(--cat-strong);   /* 前期強兵 — 暗紅（軍事感）*/
+  --cat-enrich:      var(--cat-rich);     /* 後期富國 — 銅金（實業感）*/
+  --cat-obstacle:    #a8493a;             /* 改革阻力 — 鏽紅（警示感）*/
+}
+
+/* flying badge 漸層（沿用同色家族） */
+.cat-background { background: linear-gradient(135deg, var(--cat-background), #5a4882); }
+.cat-strengthen { background: linear-gradient(135deg, var(--cat-strengthen), #8a3a2c); }
+.cat-enrich     { background: linear-gradient(135deg, var(--cat-enrich),     #8a6020); }
+
+/* evidence-item 左邊框 */
+.evidence-item.cat-background { border-left: 3px solid var(--cat-background); }
+.evidence-item.cat-strengthen { border-left: 3px solid var(--cat-strengthen); }
+.evidence-item.cat-enrich     { border-left: 3px solid var(--cat-enrich); }
+
+/* 史料庫分組標題 */
+.evidence-group.cat-background .evidence-group-title { border-left-color: var(--cat-background); }
+.evidence-group.cat-strengthen .evidence-group-title { border-left-color: var(--cat-strengthen); }
+.evidence-group.cat-enrich     .evidence-group-title { border-left-color: var(--cat-enrich); }
+.evidence-group.cat-background .evidence-group-title::before { background: var(--cat-background); }
+.evidence-group.cat-strengthen .evidence-group-title::before { background: var(--cat-strengthen); }
+.evidence-group.cat-enrich     .evidence-group-title::before { background: var(--cat-enrich); }
+
+/* 「改革阻力」徽章 — 史料庫卡片角落小標 */
+.mc-cat-obstacle {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.08em 0.5em;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #fff;
+  background: var(--cat-obstacle);
+  border-radius: 2px;
+  vertical-align: middle;
+  box-shadow: 0 1px 2px rgba(168, 73, 58, 0.35);
+}
+
+/* 主分類+副標籤的整合戳印 — 微調讓 ` · 副標籤` 視覺較輕 */
+.mc-cat-stamp {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+/* Workshop 卡片中的分類標籤同樣支援副標籤（微調字距） */
+.ws-ev-cat {
+  letter-spacing: 0.03em;
+}

@@ -1901,17 +1901,27 @@ function resetInferenceUI() {
 // ══════════════════════════════════════════════════════
 // 分類飛行徽章（潛意識歸類動畫）
 // ══════════════════════════════════════════════════════
+// DSE 框架四維分類：時代背景 → 前期強兵 → 後期富國（教育併入後期）
+// 改革阻力使用 obstacle 標籤，不單獨列為主分類
 const CATEGORY_LABELS = {
-  'strong':  '強兵',
-  'rich':    '求富',
-  'talent':  '育才',
-  'thought': '思想',
+  'background':  '時代背景',
+  'strengthen':  '前期強兵',
+  'enrich':      '後期富國',
+  // 向後相容（舊存檔/舊資料若仍存在）
+  'strong':      '前期強兵',
+  'rich':        '後期富國',
+  'talent':      '後期富國',
+  'thought':     '時代背景',
 };
 const CATEGORY_KEY_FROM_LABEL = {
-  '強兵':  'strong',
-  '求富':  'rich',
-  '育才':  'talent',
-  '思想':  'thought',
+  '時代背景':  'background',
+  '前期強兵':  'strengthen',
+  '後期富國':  'enrich',
+  // 向後相容
+  '強兵':  'strengthen',
+  '求富':  'enrich',
+  '育才':  'enrich',
+  '思想':  'background',
 };
 function categoryKey(category) {
   if (!category) return null;
@@ -1919,7 +1929,12 @@ function categoryKey(category) {
 }
 
 function archiveNumber(index, groupKey) {
-  const drawerMap = { thought: 'A', strong: 'B', talent: 'C', rich: 'D', other: 'Z' };
+  const drawerMap = {
+    background: 'A', strengthen: 'B', enrich: 'C',
+    // 向後相容
+    thought: 'A', strong: 'B', talent: 'C', rich: 'C',
+    other: 'Z'
+  };
   const ch = (state.chapterKey || 'chapter0').replace('chapter', 'CH');
   const drawer = drawerMap[groupKey] || 'Z';
   return `${ch}-${drawer}${String(index + 1).padStart(3, '0')}`;
@@ -2019,9 +2034,20 @@ function inferEvidenceArgument(evidenceId, ev, chapterKey = state.chapterKey) {
     point.keywords.forEach(keyword => {
       if (hay.includes(keyword)) score += keyword.length > 2 ? 2 : 1;
     });
-    if (ev?.category === '強兵' && /軍事|練兵|軍備|工業|軍/.test(point.label)) score += 1;
-    if (ev?.category === '育才' && /育才|教育|翻譯/.test(point.label)) score += 3;
-    if (ev?.category === '求富' && /求富|航運|交通|工礦|商辦/.test(point.label)) score += 2;
+    // 新四維分類（含舊值向後相容）
+    const cat = ev?.category;
+    const sub = ev?.subCategory;
+    if ((cat === '前期強兵' || cat === '強兵') && /軍事|練兵|軍備|工業|軍|外交/.test(point.label)) score += 1;
+    if ((cat === '後期富國' || cat === '求富' || cat === '育才') && /求富|航運|交通|工礦|商辦|育才|教育|翻譯/.test(point.label)) score += 2;
+    if ((cat === '時代背景' || cat === '思想') && /背景|內憂|外患|思潮|傳統|守舊|失敗|阻力/.test(point.label)) score += 1;
+    // 副標籤加權：精確命中對應論點
+    if (sub === '軍事工業' && /軍事|工業|機器/.test(point.label)) score += 2;
+    if (sub === '編練新軍' && /練兵|新軍|軍隊/.test(point.label)) score += 2;
+    if (sub === '外交政治' && /外交|總理衙門|使節/.test(point.label)) score += 3;
+    if (sub === '興辦實業' && /實業|航運|工礦|商辦|電報|鐵路/.test(point.label)) score += 2;
+    if (sub === '改革教育' && /教育|育才|學堂|翻譯|留學/.test(point.label)) score += 3;
+    // 改革阻力專屬：直接對應「失敗原因」論點
+    if (ev?.obstacle === true && /失敗|阻力|保守|腐敗|挪用|識見|局限/.test(point.label)) score += 4;
     if (score > bestScore) {
       best = point;
       bestScore = score;
@@ -2399,10 +2425,13 @@ function renderEvidencePanel() {
       const year = extractEvidenceYear(ev.content);
       archiveIdx++;
       // 博物館典藏卡風格：頂部年份+分類印章 → 標題 → 描述 → 底部蓋章+編號
+      const catText = (ev.category || '史料') + (ev.subCategory ? ` · ${ev.subCategory}` : '');
+      const obstacleTag = ev.obstacle ? `<span class="mc-cat-obstacle" title="改革阻力史料">⚠ 阻力</span>` : '';
       item.innerHTML  = `
         <header class="mc-head">
           <span class="mc-year">${year}</span>
-          <span class="mc-cat-stamp">${ev.category || '史料'}</span>
+          <span class="mc-cat-stamp">${catText}</span>
+          ${obstacleTag}
         </header>
         <div class="mc-rule"></div>
         <h4 class="mc-title">${ev.name}</h4>
@@ -3164,8 +3193,9 @@ function renderMemorialWorkshop(ch) {
       card.className = 'ws-ev-card';
       card.dataset.id = evId;
       card.dataset.aspect = label;
+      const wsCatText = (ev.category || '史料') + (ev.subCategory ? ` · ${ev.subCategory}` : '');
       card.innerHTML = `
-        <span class="ws-ev-cat">${ev.category || '史料'}</span>
+        <span class="ws-ev-cat">${wsCatText}</span>
         <strong class="ws-ev-name">${ev.name}</strong>
         <span class="ws-ev-lead">${shortEvidenceLead(ev.content)}</span>`;
       card.addEventListener('click', () => wsSelectInAspect(label, evId));
