@@ -1965,13 +1965,26 @@ function drawerCode(groupKey) {
 
 const CHAPTER_ARGUMENTS = {
   chapter1: [
-    // 清廷武備衰落：清軍自身裝備落後（鑄鐵炮、騎兵、弓、士兵）
-    { id: 'military_gap', label: '清廷武備衰落', dseUse: '背景', keywords: ['槍', '武器', '火器', '騎兵', '弓', '射程', '戰敗', '清兵', '士官', '炮台', '前膛', '青銅', '彎刀', '冷兵器', '八十年'] },
-    // 列強堅船利炮：西方先進武器 + 條約壓迫（阿姆斯特朗、後膛炮、條約）
-    { id: 'foreign_pressure', label: '列強堅船利炮', dseUse: '背景', keywords: ['阿姆斯特朗', '後膛', '黃銅', '彈殼', 'Armstrong', 'Nemesis', '鐵甲', '六磅', '聯軍', '條約', '南京', '北京', '割', '賠款', '列強', '外交官', '通牒', '公使', '勢力'] },
-    // 內憂外患：太平天國與常勝軍鎮壓內亂（戈登、華爾、蘇州、湘軍、淮軍）
-    { id: 'domestic_crisis', label: '內憂外患', dseUse: '背景', keywords: ['太平', '常勝軍', '戈登', '華爾', '蘇州', '湘軍', '淮軍', '平亂', '鎮壓', '洋將', '金田', '天京', '半壁'] },
-    { id: 'reform_thought', label: '思想轉變', dseUse: '背景', keywords: ['海國圖志', '師夷', '校邠盧', '中學為體', '文祥', '魏源', '馮桂芬', '夷情', '總理衙門'] },
+    // DSE 框架：「軍事敗因」統合清廷武備衰落與列強堅船利炮，
+    // 這是 DSE 答「洋務興起背景」時最核心的一個論點（兩面一體）
+    { id: 'military_defeat', label: '軍事敗因', dseUse: '背景',
+      keywords: [
+        // 清軍衰落面
+        '槍', '武器', '火器', '騎兵', '弓', '射程', '戰敗', '清兵', '士官', '炮台',
+        '前膛', '青銅', '彎刀', '冷兵器', '八十年',
+        // 列強優勢面
+        '阿姆斯特朗', '後膛', '黃銅', '彈殼', 'Armstrong', '鐵甲', '六磅',
+        '聯軍', '條約', '南京', '北京', '割', '賠款', '列強', '通牒',
+      ]
+    },
+    // 內憂外患：太平天國 + 常勝軍借助洋槍鎮亂，說明內部動盪亦推動洋務
+    { id: 'domestic_crisis', label: '內憂外患', dseUse: '背景',
+      keywords: ['太平', '常勝軍', '戈登', '華爾', '蘇州', '湘軍', '淮軍', '平亂', '鎮壓', '洋將', '金田', '天京', '半壁']
+    },
+    // 思想轉變：開明官員 / 學者提出「師夷長技」，是洋務的思想基礎
+    { id: 'reform_thought', label: '思想轉變', dseUse: '背景',
+      keywords: ['海國圖志', '師夷', '校邠盧', '中學為體', '文祥', '魏源', '馮桂芬', '夷情', '總理衙門']
+    },
   ],
   chapter2: [
     { id: 'military_industry', label: '軍事工業', dseUse: '措施', keywords: ['江南', '機器', '炮管', '蒸汽', '齒輪', '煤鐵', '船政', '製造', '兵工'] },
@@ -2074,15 +2087,11 @@ function buildArgumentSentence(point, chapterKey) {
   // 同一周目同一論點保持一致，跨周目自動換句，避免機械記憶。
   const openings = {
     chapter1: {
-      military_gap: [
-        '鴉片戰爭及英法聯軍之役暴露清朝軍事技術落後，促使開明官員主張學習西方軍事技術。',
-        '虎門炮台與八里橋接連潰敗，使有識之士意識到舊式軍備已不堪用，必須及早變革。',
-        '兩次鴉片戰爭中清軍以冷兵器抵禦堅船利炮，慘敗結局直接推動了「師夷長技以制夷」之議。',
-      ],
-      foreign_pressure: [
-        '列強入侵與不平等條約衝擊清朝主權，成為洋務運動興起的重要外部壓力。',
-        '《南京》《北京》諸約使國門洞開，關稅、領事裁判等權利盡失，迫使朝野思考自強之道。',
-        '英法俄美環伺、條約體系成形，使「天朝上國」幻象破滅，洋務派遂以「自強」為號召。',
+      // 合併舊 military_gap + foreign_pressure → military_defeat
+      military_defeat: [
+        '兩次鴉片戰爭中清軍以冷兵器抵禦堅船利炮，慘敗結局與不平等條約直接推動「師夷長技以制夷」之議。',
+        '虎門炮台、八里橋接連潰敗，清廷武備落後與列強軍事優勢的懸殊對比，是洋務興起最直接的外部衝擊。',
+        '清軍傳統武備不堪一擊，英法聯軍憑堅船利炮迫使清廷簽訂諸約——這場軍事與主權的雙重失敗，是洋務運動的起點。',
       ],
       domestic_crisis: [
         '太平天國等內憂迫使清廷倚重洋槍洋炮與地方督撫，推動洋務派思考自強之路。',
@@ -2761,6 +2770,13 @@ function startDialogue(scene) {
   // 進入對白：收起場景字幕，展開對白區
   setSceneSubtitle('');
   setDialogueCollapsed(false);
+  // 對白開始時自動收起史料庫，避免遮蓋對話框（portrait 模式）
+  const _ep = $('evidence-panel');
+  const _gs = $('game-screen');
+  if (_ep && !_ep.classList.contains('evidence-collapsed')) {
+    _ep.classList.add('evidence-collapsed');
+    if (_gs) _gs.classList.add('evidence-collapsed');
+  }
   updateMissionStatus(scene);
   const dl = scene.dialogue;
 
